@@ -139,10 +139,6 @@ export const RANKS: Rank[] = [
     new Rank("A", 14, 2, 1),
 ];
 
-// models always understand the seasonal suit as the one with index 0
-// we just rotate around this
-const seasonal_suit_index = 0;
-
 // TODO: named instead?
 const suitsData = [
     { name: "Diamonds", html: "&diams;"},
@@ -158,14 +154,15 @@ export function getSuits(): Suit[] {
     );
 }
 
+export const SUIT_NAMES = ['Diamonds', 'Hearts', 'Spades', 'Clubs'] as const;
+export type suitName = typeof SUIT_NAMES[number];
+
+export function getSuit(suitName: suitName): Suit {
+    return getSuits().filter(suit => suit.name === suitName)[0];
+}
 
 export const arbitrarySuit = getSuits()[0];
 export const N_SUITS = getSuits().length;
-
-export function getSuitAsSeasonal(shortName: string): Suit {
-    const suitData =  suitsData.filter(suitData => suitData.name[0] === shortName)[0];
-    return new Suit(suitData.name, seasonal_suit_index, suitData.html);
-}
 
 export function getRank(shortName: string): Rank {
     return RANKS.filter(rank => rank.toStringShort() === shortName)[0];
