@@ -28,6 +28,10 @@ export class Grid {
         );
     }
 
+    clone(): Grid {
+        return this;  // TODO
+    }
+
     play(card: Card, player: Player): void {
         const cardStr = card.toStringShort();
         if (this.cards[cardStr].data !== null) {

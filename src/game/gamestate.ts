@@ -1,5 +1,6 @@
 import { Card, Suit, getFullPack, shuffle } from "./card";
 import { Player, PlayerName, playerNameArr } from "./player";
+import { Grid } from "./grid";
 import { Agent, AgentName, agentLookup } from "./agent/agent";
 import { GameLog } from "./log";
 
@@ -23,6 +24,7 @@ export class GameState {
     public trickIndex: number;
     public trickInProgress: [Card, Player][] = [];
     public playedCards: Card[] = []
+    public grid: Grid = new Grid();
 
     public handNumber: number = 0;
     public currentState: state = 'game_initialise';
@@ -68,6 +70,7 @@ export class GameState {
             ([card, player]) => [card, player.clone()]
         );
         newState.playedCards = [...this.playedCards];
+        newState.grid = this.grid.clone();
     
         newState.handNumber = this.handNumber;
         newState.currentState = this.currentState;
@@ -295,6 +298,8 @@ export class GameState {
             return false;
         }
         const [playedCard] = hand.splice(index, 1);
+        this.grid.play(playedCard, player);
+        // TODO: think we can just leave it all in the grid!
         this.trickInProgress.push([playedCard, player]);
         this.playedCards.push(playedCard);
 
@@ -311,6 +316,7 @@ export class GameState {
     dealCards(log: GameLog | null): void {
         const pack = getFullPack();
         // TODO: filter out table cards
+        // TODO: set up table cards, probably before this.
         shuffle(pack);
         for (let i = 0; i < 13; i++) {
             // for (const player of this.state.players) {
