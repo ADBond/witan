@@ -1,10 +1,16 @@
 import { Card, getFullPack } from "./card";
 import { Player } from "./player";
 
+type CardData = {
+    player: Player,
+    faceup: boolean,
+    currentTrick: boolean,
+    lead: boolean,
+}
+
 type GridEntry = {
     card: Card,
-    player: Player | null,
-    faceup: boolean | null,
+    data: CardData | null,
 }
 
 export class Grid {
@@ -16,7 +22,7 @@ export class Grid {
             pack.map(
                 card => [
                     card.toStringShort(),
-                    {"card": card, "player": null, "faceup": null}
+                    {"card": card, "data": null}
                 ]
             )
         );
@@ -24,16 +30,20 @@ export class Grid {
 
     play(card: Card, player: Player): void {
         const cardStr = card.toStringShort();
-        if (this.cards[cardStr].player !== null) {
+        if (this.cards[cardStr].data !== null) {
             throw Error(`Card already played! ${card}`)
         }
 
-        this.cards[cardStr].player === player;
-        this.cards[cardStr].faceup === true;
+        this.cards[cardStr].data = {
+            "player": player,
+            "faceup": true,
+            "currentTrick": true,
+            "lead": true,  // TODO
+        }
     }
 
     turndown(card: Card): void {
         const cardStr = card.toStringShort();
-        this.cards[cardStr].faceup === false;
+        this.cards[cardStr].data!.faceup = false;
     }
 }
