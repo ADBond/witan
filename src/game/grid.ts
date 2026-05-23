@@ -32,10 +32,14 @@ export class Grid {
         );
     }
 
-    get currentTrick(): [Card, Player][] {
-        const gridJustTrick = Object.values(this.cards).filter(
+    get currentTrickEntries(): GridEntry[] {
+        return Object.values(this.cards).filter(
             gridEntry => gridEntry.data !== null && gridEntry.data.trick !== null
         );
+    }
+
+    get currentTrick(): [Card, Player][] {
+        const gridJustTrick = this.currentTrickEntries;
         gridJustTrick.sort((e1, e2) => e1.data!.trick!.cardInTrickNumber! - e2.data!.trick!.cardInTrickNumber!);
         return gridJustTrick.map(
             gridEntry => [gridEntry.card, gridEntry.data!.trick!.player]
@@ -86,7 +90,9 @@ export class Grid {
 
     resetTrick(): void {
         // TODO: turndown isolated cards
-        // TODO: remove current trick markers
+        this.currentTrickEntries.forEach(
+            (gridEntry) => gridEntry.data!.trick = null
+        )
     }
 
     turndown(card: Card): void {
