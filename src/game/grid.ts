@@ -1,10 +1,14 @@
 import { Card, Rank, getNextRankUp, getFullPack } from "./card";
 import { Player } from "./player";
 
-type CardData = {
+type trickData = {
     player: Player,
+    cardInTrickNumber: number,
+}
+
+type CardData = {
     faceup: boolean,
-    cardInTrickNumber: number | null,
+    trick: trickData | null,
 }
 
 type GridEntry = {
@@ -30,11 +34,11 @@ export class Grid {
 
     get currentTrick(): [Card, Player][] {
         const gridJustTrick = Object.values(this.cards).filter(
-            gridEntry => gridEntry.data !== null && gridEntry.data.cardInTrickNumber !== null
+            gridEntry => gridEntry.data !== null && gridEntry.data.trick !== null
         );
-        gridJustTrick.sort((e1, e2) => e1.data!.cardInTrickNumber! - e2.data!.cardInTrickNumber!);
+        gridJustTrick.sort((e1, e2) => e1.data!.trick!.cardInTrickNumber! - e2.data!.trick!.cardInTrickNumber!);
         return gridJustTrick.map(
-            gridEntry => [gridEntry.card, gridEntry.data!.player]
+            gridEntry => [gridEntry.card, gridEntry.data!.trick!.player]
         )
     }
 
@@ -57,14 +61,27 @@ export class Grid {
     play(card: Card, player: Player, cardInTrickNumber: number): void {
         const cardStr = card.toStringShort();
         if (this.cards[cardStr].data !== null) {
-            throw Error(`Card already played! ${card}`)
+            throw Error(`Card already in grid ${card}`)
         }
 
         this.cards[cardStr].data = {
-            "player": player,
             "faceup": true,
-            "cardInTrickNumber": cardInTrickNumber,
+            "trick": {
+                "player": player,
+                "cardInTrickNumber": cardInTrickNumber,
+            }
         }
+    }
+
+    addNeutralToGrid(card: Card): void {
+        const cardStr = card.toStringShort();
+        if (this.cards[cardStr].data !== null) {
+            throw Error(`Card already in grid! ${card}`)
+        }
+        this.cards[cardStr].data = {
+            "faceup": true,
+            "trick": null,
+        };
     }
 
     resetTrick(): void {
