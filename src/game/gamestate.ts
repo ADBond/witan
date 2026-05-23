@@ -22,8 +22,8 @@ export class GameState {
 
     public players: Player[] = [];
     public trickIndex: number;
-    public trickInProgress: [Card, Player][] = [];
-    public playedCards: Card[] = []
+    // public trickInProgress: [Card, Player][] = [];
+    // public playedCards: Card[] = [];
     public grid: Grid = new Grid();
 
     public handNumber: number = 0;
@@ -66,10 +66,10 @@ export class GameState {
         newState.players = this.players.map(player => player.clone());
         newState.trickIndex = this.trickIndex;
         // TODO: does it matter that these players are different to the ones in player array?
-        newState.trickInProgress = this.trickInProgress.map(
-            ([card, player]) => [card, player.clone()]
-        );
-        newState.playedCards = [...this.playedCards];
+        // newState.trickInProgress = this.trickInProgress.map(
+        //     ([card, player]) => [card, player.clone()]
+        // );
+        // newState.playedCards = [...this.playedCards];
         newState.grid = this.grid.clone();
     
         newState.handNumber = this.handNumber;
@@ -120,6 +120,10 @@ export class GameState {
 
     get trickNumber(): number {
         return this.trickIndex + 1;
+    }
+
+    get trickInProgress(): [Card, Player][] {
+        return this.grid.currentTrick;
     }
 
     get trickInProgressCards(): Card[] {
@@ -298,10 +302,10 @@ export class GameState {
             return false;
         }
         const [playedCard] = hand.splice(index, 1);
-        this.grid.play(playedCard, player);
+        this.grid.play(playedCard, player, this.trickInProgress.length + 1);
         // TODO: think we can just leave it all in the grid!
-        this.trickInProgress.push([playedCard, player]);
-        this.playedCards.push(playedCard);
+        // this.trickInProgress.push([playedCard, player]);
+        // this.playedCards.push(playedCard);
 
         if (this.trickInProgress.length === this.numPlayers) {
             this.currentState = "trick_complete";
@@ -331,7 +335,8 @@ export class GameState {
         this.currentPlayerIndex = this.getNextPlayerIndex(this.dealerIndex);
         this.handNumber++;
         this.trickIndex = 0;
-        this.playedCards = [];
+        // this.playedCards = [];
+        this.grid = new Grid();  // TODO: something else?
 
         if (log !== null) {
             // and update the current log
@@ -364,7 +369,7 @@ export class GameState {
         this.previousTrick = this.trickInProgress
 
         // empty the trick, and increment the counter!
-        this.trickInProgress = [];
+        this.grid.resetTrick();
         this.trickIndex++;
         if (this.handNotFinished) {
             this.currentState = "play_card";

@@ -5,7 +5,7 @@ type CardData = {
     player: Player,
     faceup: boolean,
     currentTrick: boolean,
-    lead: boolean,
+    cardInTrickNumber: number,
 }
 
 type GridEntry = {
@@ -28,11 +28,21 @@ export class Grid {
         );
     }
 
+    get currentTrick(): [Card, Player][] {
+        const gridJustTrick = Object.values(this.cards).filter(
+            gridEntry => gridEntry.data !== null && gridEntry.data.currentTrick
+        );
+        gridJustTrick.sort((e1, e2) => e1.data!.cardInTrickNumber - e2.data!.cardInTrickNumber);
+        return gridJustTrick.map(
+            gridEntry => [gridEntry.card, gridEntry.data!.player]
+        )
+    }
+
     clone(): Grid {
         return this;  // TODO
     }
 
-    play(card: Card, player: Player): void {
+    play(card: Card, player: Player, cardInTrickNumber: number): void {
         const cardStr = card.toStringShort();
         if (this.cards[cardStr].data !== null) {
             throw Error(`Card already played! ${card}`)
@@ -42,12 +52,18 @@ export class Grid {
             "player": player,
             "faceup": true,
             "currentTrick": true,
-            "lead": true,  // TODO
+            "cardInTrickNumber": cardInTrickNumber,
         }
+    }
+
+    resetTrick(): void {
+        // TODO: turndown isolated cards
+        // TODO: remove current trick markers
     }
 
     turndown(card: Card): void {
         const cardStr = card.toStringShort();
         this.cards[cardStr].data!.faceup = false;
     }
+
 }
