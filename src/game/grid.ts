@@ -4,8 +4,7 @@ import { Player } from "./player";
 type CardData = {
     player: Player,
     faceup: boolean,
-    currentTrick: boolean,
-    cardInTrickNumber: number,
+    cardInTrickNumber: number | null,
 }
 
 type GridEntry = {
@@ -30,9 +29,9 @@ export class Grid {
 
     get currentTrick(): [Card, Player][] {
         const gridJustTrick = Object.values(this.cards).filter(
-            gridEntry => gridEntry.data !== null && gridEntry.data.currentTrick
+            gridEntry => gridEntry.data !== null && gridEntry.data.cardInTrickNumber !== null
         );
-        gridJustTrick.sort((e1, e2) => e1.data!.cardInTrickNumber - e2.data!.cardInTrickNumber);
+        gridJustTrick.sort((e1, e2) => e1.data!.cardInTrickNumber! - e2.data!.cardInTrickNumber!);
         return gridJustTrick.map(
             gridEntry => [gridEntry.card, gridEntry.data!.player]
         )
@@ -51,7 +50,6 @@ export class Grid {
         this.cards[cardStr].data = {
             "player": player,
             "faceup": true,
-            "currentTrick": true,
             "cardInTrickNumber": cardInTrickNumber,
         }
     }
