@@ -17,6 +17,9 @@ export function renderGrid(grid: Grid) {
             boardEl.appendChild(el);
         }
     )
+    // TODO: need all cards, and ordered by rank
+    // display as present, missing, or backed
+    // TODO: markers as well
     grid.neutralCards.forEach(
         gridEntry => {
             const card = gridEntry.card;
