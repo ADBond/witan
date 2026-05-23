@@ -139,6 +139,8 @@ export const RANKS: Rank[] = [
     new Rank("A", 14, 2, 1),
 ];
 
+export const topRank = RANKS[-1];
+
 // TODO: named instead?
 const suitsData = [
     { name: "Diamonds", html: "&diams;"},

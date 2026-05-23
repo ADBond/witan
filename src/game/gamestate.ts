@@ -417,7 +417,7 @@ export class GameState {
     getStateForUI(): GameStateForUI {
         return ({
             hands: { comp1: [], player: this.currentState === "hand_complete" ? [] : this.humanHand.slice(), comp2: [] },
-            played: this.played,
+            grid: this.grid,
 
             scores: Object.fromEntries(
                 this.players.map(
@@ -442,7 +442,7 @@ export class GameState {
 
 export interface GameStateForUI {
     hands: Record<PlayerName, Card[]>;
-    played: Record<PlayerName, Card | null | 'back'>;
+    grid: Grid,
 
     scores: Record<PlayerName, number>,
     prevScores: Record<PlayerName, number>,

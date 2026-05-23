@@ -1,4 +1,4 @@
-import { Card, Rank, getNextRankUp, getFullPack } from "./card";
+import { Card, Rank, topRank, getNextRankUp, getFullPack } from "./card";
 import { Player } from "./player";
 
 type trickData = {
@@ -38,6 +38,12 @@ export class Grid {
         );
     }
 
+    get neutralCards(): GridEntry[] {
+        return Object.values(this.cards).filter(
+            gridEntry => gridEntry.data !== null && gridEntry.data.trick === null
+        );
+    }
+
     get currentTrick(): [Card, Player][] {
         const gridJustTrick = this.currentTrickEntries;
         gridJustTrick.sort((e1, e2) => e1.data!.trick!.cardInTrickNumber! - e2.data!.trick!.cardInTrickNumber!);
@@ -49,7 +55,7 @@ export class Grid {
     get topRank(): Rank {
         if (this._topRank === null) {
             // TODO: derive this from the grid
-            return new Rank('dummy', -1, -1, -1);
+            return topRank;
         }
         return this._topRank;
     }

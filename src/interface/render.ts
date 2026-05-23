@@ -1,6 +1,7 @@
 import { createCardElement } from './ui';
 import { GameStateForUI, state } from '../game/gamestate';
 import { PlayerName, playerNameArr } from '../game/player';
+import { renderGrid } from './grid';
 import { onHumanPlay } from './api';
 
 
@@ -16,6 +17,7 @@ export async function renderState(state: GameStateForUI) {
       (c1.rank.trickTakingRank - c2.rank.trickTakingRank)
     )
   );
+  renderGrid(state.grid);
   handEl.innerHTML = '';
   playerHand.forEach(card => {
     handEl.appendChild(
