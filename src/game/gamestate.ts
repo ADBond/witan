@@ -337,6 +337,15 @@ export class GameState {
         this.trickIndex = 0;
         // this.playedCards = [];
         this.grid = new Grid();  // TODO: something else?
+        // for now just a fixed grid from a deal the other day
+        this.grid.addNeutralsToGrid(
+            [
+                "5C", "6C", "7C", "8C",
+                "8S", "9S", "TS", "JS",
+                "8H", "9H",
+                "7D", "8D", "9D",
+            ]
+        )
 
         if (log !== null) {
             // and update the current log

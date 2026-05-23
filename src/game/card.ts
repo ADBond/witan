@@ -157,8 +157,8 @@ export function getSuits(): Suit[] {
 export const SUIT_NAMES = ['Diamonds', 'Hearts', 'Spades', 'Clubs'] as const;
 export type suitName = typeof SUIT_NAMES[number];
 
-export function getSuit(suitName: suitName): Suit {
-    return getSuits().filter(suit => suit.name === suitName)[0];
+export function getSuit(suitName: string): Suit {
+    return getSuits().filter(suit => suit.toStringShort() === suitName)[0];
 }
 
 export const arbitrarySuit = getSuits()[0];
@@ -191,6 +191,16 @@ export function getFullPack(): Card[] {
         }
     }
     return cards;
+}
+
+export function getCardFromString(name: string): Card {
+    const rank = name[0];
+    const suit = name[1];
+    const theCard = getFullPack().filter(
+        card => Rank.rankEquals(card.rank, getRank(rank)) && Suit.suitEquals(card.suit, getSuit(suit))
+    );
+    // TODO length guard?
+    return theCard[0];
 }
 
 // suit doesn't matter here

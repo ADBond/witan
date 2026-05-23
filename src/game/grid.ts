@@ -1,4 +1,4 @@
-import { Card, Rank, getNextRankUp, getFullPack } from "./card";
+import { Card, Rank, getNextRankUp, getCardFromString, getFullPack } from "./card";
 import { Player } from "./player";
 
 type trickData = {
@@ -86,6 +86,10 @@ export class Grid {
             "faceup": true,
             "trick": null,
         };
+    }
+
+    addNeutralsToGrid(cards: string[]): void {
+        cards.forEach(card => this.addNeutralToGrid(getCardFromString(card)));
     }
 
     resetTrick(): void {
