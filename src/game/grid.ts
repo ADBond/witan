@@ -1,4 +1,4 @@
-import { Card, getFullPack } from "./card";
+import { Card, Rank, getNextRankUp, getFullPack } from "./card";
 import { Player } from "./player";
 
 type CardData = {
@@ -14,6 +14,7 @@ type GridEntry = {
 
 export class Grid {
     private cards: {[key: string]: GridEntry};
+    private _topRank: Rank | null = null;
 
     constructor() {
         const pack = getFullPack();
@@ -35,6 +36,18 @@ export class Grid {
         return gridJustTrick.map(
             gridEntry => [gridEntry.card, gridEntry.data!.player]
         )
+    }
+
+    get topRank(): Rank {
+        if (this._topRank === null) {
+            // TODO: derive this from the grid
+            return new Rank('dummy', -1, -1, -1);
+        }
+        return this._topRank;
+    }
+
+    get bottomRank(): Rank {
+        return getNextRankUp(this.topRank)
     }
 
     clone(): Grid {

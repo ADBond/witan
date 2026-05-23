@@ -366,7 +366,7 @@ export class GameState {
             return;
         }
 
-        this.previousTrick = this.trickInProgress
+        this.previousTrick = this.trickInProgress;
 
         // empty the trick, and increment the counter!
         this.grid.resetTrick();

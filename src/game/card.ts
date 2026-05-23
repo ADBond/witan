@@ -168,6 +168,14 @@ export function getRank(shortName: string): Rank {
     return RANKS.filter(rank => rank.toStringShort() === shortName)[0];
 }
 
+export function getRankFromTTR(ttr: number): Rank {
+    return RANKS.filter(rank => rank.trickTakingRank === ttr)[0];
+}
+
+export function getNextRankUp(rank: Rank): Rank {
+    return getRankFromTTR(rank.ttRankAbove);
+}
+
 export function getFullPack(): Card[] {
     const cards = [];
     const SUITS = getSuits();
