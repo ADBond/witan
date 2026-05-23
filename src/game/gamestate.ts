@@ -1,4 +1,4 @@
-import { Card, Suit, getFullPack, shuffle } from "./card";
+import { Card, Suit, getCardFromString, getFullPack, shuffle } from "./card";
 import { Player, PlayerName, playerNameArr } from "./player";
 import { Grid } from "./grid";
 import { Agent, AgentName, agentLookup } from "./agent/agent";
@@ -319,16 +319,30 @@ export class GameState {
     // TODO: seed?
     dealCards(log: GameLog | null): void {
         const pack = getFullPack();
+        const tableCardStrings = [
+            "5C", "6C", "7C", "8C",
+            "8S", "9S", "TS", "JS",
+            "8H", "9H",
+            "7D", "8D", "9D",
+        ];
+        const tableCards = tableCardStrings.map(cardString => getCardFromString(cardString))
+        const toDeal = pack.filter(card => !tableCards.some(tableCard => Card.cardEquals(card, tableCard)));
         // TODO: filter out table cards
         // TODO: set up table cards, probably before this.
-        shuffle(pack);
+        this.grid = new Grid();  // TODO: something else?
+        // for now just a fixed grid from a deal the other day
+        this.grid.addNeutralsToGrid(tableCards);
+        shuffle(toDeal);
         for (let i = 0; i < 13; i++) {
             // for (const player of this.state.players) {
             // TODO: loop this properly!
             for (let playerIndex = 0; playerIndex < this.numPlayers; playerIndex++) {
-                const card = pack.pop();
+                const card = toDeal.pop();
                 if (card) this.giveCardToPlayer(playerIndex, card);
             }
+        }
+        if (toDeal.length > 0) {
+            throw Error(`Remaining cards! ${toDeal.join(', ')}`)
         }
 
         this.currentState = 'play_card';
@@ -336,16 +350,6 @@ export class GameState {
         this.handNumber++;
         this.trickIndex = 0;
         // this.playedCards = [];
-        this.grid = new Grid();  // TODO: something else?
-        // for now just a fixed grid from a deal the other day
-        this.grid.addNeutralsToGrid(
-            [
-                "5C", "6C", "7C", "8C",
-                "8S", "9S", "TS", "JS",
-                "8H", "9H",
-                "7D", "8D", "9D",
-            ]
-        )
 
         if (log !== null) {
             // and update the current log

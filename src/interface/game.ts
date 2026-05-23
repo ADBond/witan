@@ -6,7 +6,7 @@ const opp = 'random';
 
 export function newGame(): void {
     game = new Game(
-        ['human', opp, opp, opp],
+        ['human', opp, opp],
         defaultConfig,
     );
 }
