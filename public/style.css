@@ -36,6 +36,34 @@ body {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+.marker {
+    position: relative;
+    height: 40px;
+    top: 24px;
+    width: 40px;
+    left: 12px;
+    border-radius: 50%;
+    border: 4px solid black;
+}
+
+.marker-lead {
+    border-color: yellow;
+    border-style: dashed;
+}
+
+/* TODO player colours */
+.marker-player {
+    background-color: #a00;
+}
+
+.marker-comp1 {
+    background-color: #0a0;
+}
+
+.marker-comp2 {
+    background-color: #00a;
+}
+
 .hand .card {
     cursor: pointer;
 }
