@@ -27,6 +27,15 @@ body {
     transition: transform 0.1s;
 }
 
+.card-back {
+    background-image: url('back.svg');
+}
+
+.card-absent {
+    background-image: none;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
 .hand .card {
     cursor: pointer;
 }

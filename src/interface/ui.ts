@@ -27,7 +27,7 @@ export function createCardElement(card: string, onClick?: () => void): HTMLEleme
   } else if (card === "back") {
     span.classList.add("card-back");
   } else {
-    span.style.background = "#ccc";    
+    span.classList.add("card-absent");   
   }
 
   if (onClick) span.onclick = () => onClick();

@@ -20,11 +20,19 @@ export function renderGrid(grid: Grid) {
     // TODO: need all cards, and ordered by rank
     // display as present, missing, or backed
     // TODO: markers as well
-    grid.neutralCards.forEach(
+    grid.allCards.forEach(
         gridEntry => {
             const card = gridEntry.card;
             const parentEl = document.getElementById(suitRowID(card.suit))!;
-            const el = createCardElement(card.toStringShort())
+            let cardSpec: string;
+            if (gridEntry.data === null) {
+                cardSpec = 'absent';
+            } else if (gridEntry.data.faceup) {
+                cardSpec = card.toStringShort();
+            } else {
+                cardSpec = 'back';
+            }
+            const el = createCardElement(cardSpec);
             parentEl.appendChild(el);
         }
     );

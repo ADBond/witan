@@ -38,6 +38,11 @@ export class Grid {
         );
     }
 
+    get allCards(): GridEntry[] {
+        // keep as a getter to give us flexibility
+        return Object.values(this.cards);
+    }
+
     get neutralCards(): GridEntry[] {
         return Object.values(this.cards).filter(
             gridEntry => gridEntry.data !== null && gridEntry.data.trick === null
