@@ -40,6 +40,7 @@ export class Grid {
 
     get allCards(): GridEntry[] {
         // keep as a getter to give us flexibility
+        // TODO: should we do rank logic / padding here?
         return Object.values(this.cards);
     }
 
