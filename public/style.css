@@ -73,10 +73,6 @@ body {
     border-color: #fff;
 }
 
-.played-card {
-    opacity: 1.0;
-}
-
 .hand {
     margin-top: 30px;
     height: 110px;

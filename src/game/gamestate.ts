@@ -417,7 +417,7 @@ export class GameState {
     getStateForUI(): GameStateForUI {
         return ({
             hands: { comp1: [], player: this.currentState === "hand_complete" ? [] : this.humanHand.slice(), comp2: [] },
-            grid: this.grid,
+            grid: this.grid.clone(),
 
             scores: Object.fromEntries(
                 this.players.map(

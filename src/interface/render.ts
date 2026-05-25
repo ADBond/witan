@@ -12,7 +12,6 @@ export async function renderState(state: GameStateForUI) {
   playerHand.sort(
     (c1, c2) => (
       // 100 big enough to ensure we always sort by suit first
-      // TODO: align order with season
       100 * (c1.suit.rankForSorting - c2.suit.rankForSorting) +
       (c1.rank.trickTakingRank - c2.rank.trickTakingRank)
     )

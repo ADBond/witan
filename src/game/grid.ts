@@ -70,7 +70,19 @@ export class Grid {
     }
 
     clone(): Grid {
-        return this;  // TODO
+        const cloned = new Grid();
+        cloned.cards = Object.fromEntries(
+            Object.entries(this.cards).map(
+                ([cardString, gridEntry]) => {
+                    let newGridEntry = gridEntry;
+                    if (newGridEntry.data !== null && newGridEntry.data.trick !== null) {
+                        newGridEntry.data.trick!.player = newGridEntry.data.trick.player.clone();
+                    }
+                    return [cardString, newGridEntry];
+                }
+            )
+        );
+        return cloned;
     }
 
     play(card: Card, player: Player, cardInTrickNumber: number): void {
