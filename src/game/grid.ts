@@ -74,9 +74,21 @@ export class Grid {
         cloned.cards = Object.fromEntries(
             Object.entries(this.cards).map(
                 ([cardString, gridEntry]) => {
-                    let newGridEntry = gridEntry;
-                    if (newGridEntry.data !== null && newGridEntry.data.trick !== null) {
-                        newGridEntry.data.trick!.player = newGridEntry.data.trick.player.clone();
+                    let newGridEntry: GridEntry = {
+                        card: gridEntry.card,
+                        data: gridEntry.data,
+                    };
+                    if (newGridEntry.data !== null) {
+                        newGridEntry.data = {
+                            faceup: newGridEntry.data.faceup,
+                            trick: newGridEntry.data.trick,
+                        }
+                        if (newGridEntry.data.trick !== null) {
+                            newGridEntry.data.trick = {
+                                player: newGridEntry.data.trick.player.clone(),
+                                cardInTrickNumber: newGridEntry.data.trick.cardInTrickNumber,
+                            };
+                        }
                     }
                     return [cardString, newGridEntry];
                 }

@@ -17,9 +17,8 @@ export function renderGrid(grid: Grid) {
             boardEl.appendChild(el);
         }
     )
-    // TODO: need all cards, and ordered by rank
-    // display as present, missing, or backed
-    // TODO: markers as well
+    // TODO: need to order by rank
+    // TODO: might we need a rank above AND below? can that happen?
     grid.allCards.forEach(
         gridEntry => {
             const card = gridEntry.card;
