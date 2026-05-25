@@ -58,6 +58,22 @@ export class Grid {
         )
     }
 
+    get contiguousGrid() {
+        // for each suit:
+        // start with the lowest card
+        // if its present and faceup it isstarter
+        // else we move up, until we have a starter
+        // from starter
+        // it is highest and lowest card
+        // move up until we get to a space, or reacharound
+        // then we have highest
+        // if we can then move down as well
+        // gives us 'highest' and 'lowest' for each suit
+        // need to do something about gaps - markers will help us
+        // TODO: what do we want to return here?
+        return 0;
+    }
+
     get topRank(): Rank {
         if (this._topRank === null) {
             // TODO: derive this from the grid
