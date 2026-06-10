@@ -1,4 +1,4 @@
-import { Card, Rank, topRank, getCard, getNextRankUp, getFullPack, getSuits } from "./card";
+import { Card, Suit, Rank, topRank, getCard, getNextRankUp, getFullPack, getSuits } from "./card";
 import { Player } from "./player";
 
 type trickData = {
@@ -60,44 +60,47 @@ export class Grid {
 
     get contiguousGrid() {
         // for each suit:
-        getSuits().forEach(
+        const highestLowestsBySuit: [Suit, [Rank, Rank]] = getSuits().map(
             suit => {
-                // we can start anywhere, so why not 2
-                // if its present and faceup it isstarter
-                // else we move up, until we have a starter
-                let starterCard: Card;
-                let gridEntry: GridEntry;
-                let trialRank: Rank = topRank;
-                do {
-                    trialRank = getNextRankUp(trialRank);
-                    starterCard = getCard(trialRank, suit);
-                    gridEntry = this.cards[starterCard.toStringShort()];
-                } while (!((gridEntry.data !== null) && (gridEntry.data.faceup)));
-                // from starter
-                // it is highest and lowest card
-                let trialLowest = trialRank;
-                let trialHighest = trialRank;
-                // move up until we get to a space, or reacharound
-                do {
-                    trialHighest = getNextRankUp(trialHighest);
-                    starterCard = getCard(trialHighest, suit);
-                    gridEntry = this.cards[starterCard.toStringShort()];
-                } while (!(Rank.rankEquals(trialHighest, trialLowest)) && gridEntry.data !== null && gridEntry.data.faceup);
-                const highest = trialHighest;
-                // now down again
-                do {
-                    trialHighest = getNextRankUp(trialHighest);
-                    starterCard = getCard(trialHighest, suit);
-                    gridEntry = this.cards[starterCard.toStringShort()];
-                } while (!(Rank.rankEquals(trialHighest, trialLowest)) && gridEntry.data !== null && gridEntry.data.faceup);
+                // suit cards that are not part of a trick, and which are faceup
+                const suitCards = Object.values(this.cards).filter(
+                    gridEntry => gridEntry.data !== null && gridEntry.data.trick === null && gridEntry.data.faceup
+                ).map(
+                    gridEntry => gridEntry.card
+                );
+                // (2, 3), (3, 4), (4, 5)
+                // {3, 4, 5}
+                const pointedToRanks = new Set(suitCards.map(card => card.rank.ttRankAbove));
+                // lowest card is the single one that is not pointed to
+                // (2, 3)
+                const lowest = suitCards.filter(card => !pointedToRanks.has(card.rank.trickTakingRank));
+                // if all are pointed to, then we return the top rank as stored
+                if (lowest.length === 0){
+                    if (this._topRank === null) {
+                        throw new Error(`Should have a top rank: ${this}`);
+                    }
+                    return [suit, [getNextRankUp(this._topRank), this._topRank]];
+                }
+                if (lowest.length > 1) {
+                    throw Error(`grid error: ${lowest}`);
+                }
+                const lowestCard = lowest[0];
+
+                // (2, 3), (3, 4), (4, 5)
+                // {2, 3, 4}
+                const pointedFromRanks = new Set(suitCards.map(card => card.rank.trickTakingRank));
+                // highest card is the single one that points into the 'void'
+                // (4, 5)
+                const highest = suitCards.filter(card => !pointedFromRanks.has(card.rank.ttRankAbove));
+                if (highest.length > 1) {
+                    throw Error(`grid error: ${highest}`);
+                }
+                const highestCard = highest[0];
+                return [suit, [lowestCard.rank, highestCard.rank]];
+
             }
         )
-        // start with the lowest card
-        // then we have highest
-        // if we can then move down as well
-        // gives us 'highest' and 'lowest' for each suit
-        // need to do something about gaps - markers will help us
-        // TODO: what do we want to return here?
+
         return 0;
     }
 
