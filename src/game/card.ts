@@ -195,14 +195,18 @@ export function getFullPack(): Card[] {
     return cards;
 }
 
-export function getCardFromString(name: string): Card {
-    const rank = name[0];
-    const suit = name[1];
+export function getCard(rank: Rank, suit: Suit): Card {
     const theCard = getFullPack().filter(
-        card => Rank.rankEquals(card.rank, getRank(rank)) && Suit.suitEquals(card.suit, getSuit(suit))
+        card => Rank.rankEquals(card.rank, rank) && Suit.suitEquals(card.suit, suit)
     );
     // TODO length guard?
     return theCard[0];
+}
+
+export function getCardFromString(name: string): Card {
+    const rank = name[0];
+    const suit = name[1];
+    return getCard(getRank(rank), getSuit(suit));
 }
 
 // suit doesn't matter here

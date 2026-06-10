@@ -1,4 +1,4 @@
-import { Card, Rank, topRank, getNextRankUp, getFullPack } from "./card";
+import { Card, Rank, topRank, getCard, getNextRankUp, getFullPack, getSuits } from "./card";
 import { Player } from "./player";
 
 type trickData = {
@@ -60,12 +60,39 @@ export class Grid {
 
     get contiguousGrid() {
         // for each suit:
+        getSuits().forEach(
+            suit => {
+                // we can start anywhere, so why not 2
+                // if its present and faceup it isstarter
+                // else we move up, until we have a starter
+                let starterCard: Card;
+                let gridEntry: GridEntry;
+                let trialRank: Rank = topRank;
+                do {
+                    trialRank = getNextRankUp(trialRank);
+                    starterCard = getCard(trialRank, suit);
+                    gridEntry = this.cards[starterCard.toStringShort()];
+                } while (!((gridEntry.data !== null) && (gridEntry.data.faceup)));
+                // from starter
+                // it is highest and lowest card
+                let trialLowest = trialRank;
+                let trialHighest = trialRank;
+                // move up until we get to a space, or reacharound
+                do {
+                    trialHighest = getNextRankUp(trialHighest);
+                    starterCard = getCard(trialHighest, suit);
+                    gridEntry = this.cards[starterCard.toStringShort()];
+                } while (!(Rank.rankEquals(trialHighest, trialLowest)) && gridEntry.data !== null && gridEntry.data.faceup);
+                const highest = trialHighest;
+                // now down again
+                do {
+                    trialHighest = getNextRankUp(trialHighest);
+                    starterCard = getCard(trialHighest, suit);
+                    gridEntry = this.cards[starterCard.toStringShort()];
+                } while (!(Rank.rankEquals(trialHighest, trialLowest)) && gridEntry.data !== null && gridEntry.data.faceup);
+            }
+        )
         // start with the lowest card
-        // if its present and faceup it isstarter
-        // else we move up, until we have a starter
-        // from starter
-        // it is highest and lowest card
-        // move up until we get to a space, or reacharound
         // then we have highest
         // if we can then move down as well
         // gives us 'highest' and 'lowest' for each suit
