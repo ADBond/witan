@@ -58,9 +58,9 @@ export class Grid {
         )
     }
 
-    get contiguousGrid() {
+    get contiguousGrid(): {[key: string]: [Card, Card]} {
         // for each suit:
-        const highestLowestsBySuit: [Suit, [Rank, Rank]] = getSuits().map(
+        const highestLowestsBySuit: [Suit, [Rank, Rank]][] = getSuits().map(
             suit => {
                 // suit cards that are not part of a trick, and which are faceup
                 const suitCards = Object.values(this.cards).filter(
@@ -101,8 +101,21 @@ export class Grid {
             }
         )
 
-        return 0;
+        return Object.fromEntries(
+            highestLowestsBySuit.map(
+                ([suit, [lowRank, highRank]]) => {
+                    return [suit.toStringShort(), [getCard(lowRank, suit), getCard(highRank, suit)]];
+                }
+            )
+        );
     }
+
+
+// what about something like:
+// 234
+//   4567
+//      789TJ
+//          JQKA2
 
     get topRank(): Rank {
         if (this._topRank === null) {
