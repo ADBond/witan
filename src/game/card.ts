@@ -22,6 +22,15 @@ export class Rank {
         return r1.name === r2.name;
     }
 }
+
+export function rankTTWithRespectTo(rank: Rank, topRankWRT: Rank): number {
+    const ttr = rank.trickTakingRank;
+    if (ttr > topRankWRT.trickTakingRank) {
+        return ttr - 20;
+    }
+    return ttr;
+}
+
 // No absolute trump preference but framework for the ranking
 export class Suit {
     constructor(public name: string, public rankForTrumpPreference: number, public html: string) { }
@@ -139,7 +148,7 @@ export const RANKS: Rank[] = [
     new Rank("A", 14, 2, 1),
 ];
 
-export const topRank = RANKS[-1];
+export const arbitraryTopRank = RANKS[RANKS.length - 1];
 
 // TODO: named instead?
 const suitsData = [

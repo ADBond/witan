@@ -1,4 +1,4 @@
-import { Card, Suit, Rank, topRank, getCard, getNextRankUp, getFullPack, getSuits } from "./card";
+import { Card, Suit, Rank, arbitraryTopRank, getCard, getNextRankUp, getFullPack, getSuits, rankTTWithRespectTo } from "./card";
 import { Player } from "./player";
 
 type trickData = {
@@ -18,9 +18,8 @@ type GridEntry = {
 
 export class Grid {
     private cards: {[key: string]: GridEntry};
-    private _topRank: Rank | null = null;
 
-    constructor() {
+    constructor(private _topRank: Rank | null = null) {
         const pack = getFullPack();
         this.cards = Object.fromEntries(
             pack.map(
@@ -40,8 +39,15 @@ export class Grid {
 
     get allCards(): GridEntry[] {
         // keep as a getter to give us flexibility
-        // TODO: should we do rank logic / padding here?
-        return Object.values(this.cards);
+        // TODO: should we do padding here?
+        const gridEntries = Object.values(this.cards);
+        gridEntries.sort(
+            (g1, g2) => {
+                return 100 * (g1.card.suit.rankForTrumpPreference - g2.card.suit.rankForTrumpPreference) +
+                    (rankTTWithRespectTo(g1.card.rank, this.topRank) - rankTTWithRespectTo(g2.card.rank, this.topRank));
+            }
+        );
+        return gridEntries
     }
 
     get neutralCards(): GridEntry[] {
@@ -116,11 +122,13 @@ export class Grid {
 //   4567
 //      789TJ
 //          JQKA2
+// answer: we always build up one at a time, so have an explict top rank always.
+// we cannot consistently derive from consituent cards
 
     get topRank(): Rank {
         if (this._topRank === null) {
-            // TODO: derive this from the grid
-            return topRank;
+            // this should only be the case for empty grids
+            return arbitraryTopRank;
         }
         return this._topRank;
     }
@@ -129,8 +137,15 @@ export class Grid {
         return getNextRankUp(this.topRank)
     }
 
+    setTopRank(card: Card) {
+        if (this._topRank === null) {
+            this._topRank = card.rank;
+            return;
+        }
+    }
+
     clone(): Grid {
-        const cloned = new Grid();
+        const cloned = new Grid(this._topRank);
         cloned.cards = Object.fromEntries(
             Object.entries(this.cards).map(
                 ([cardString, gridEntry]) => {
@@ -170,6 +185,9 @@ export class Grid {
                 "cardInTrickNumber": cardInTrickNumber,
             }
         }
+
+        // TODO: not this, quite
+        // this.setTopRank(card);
     }
 
     addNeutralToGrid(card: Card): void {
@@ -181,6 +199,8 @@ export class Grid {
             "faceup": true,
             "trick": null,
         };
+
+        this.setTopRank(card);
     }
 
     addNeutralsToGrid(cards: Card[]): void {
