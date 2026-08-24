@@ -2,6 +2,7 @@ export class Rank {
     constructor(
         public name: string,
         public trickTakingRank: number,
+        public ttRankBelow: number,
         public ttRankAbove: number,
         public count_value: number,
     ) { }
@@ -136,16 +137,17 @@ export class Card {
 }
 
 export const RANKS: Rank[] = [
-    ...Array.from({ length: 8 }, (_, i) => {
-        const val = i + 2;
-        return new Rank(String(val), val, val + 1, val);
+    new Rank("2", 2, 14, 3, 2),
+    ...Array.from({ length: 7 }, (_, i) => {
+        const val = i + 3;
+        return new Rank(String(val), val, val - 1, val + 1, val);
     }),
-    new Rank("T", 10, 11, 10),
-    new Rank("J", 11, 12, 10),
-    new Rank("Q", 12, 13, 10),
-    new Rank("K", 13, 14, 10),
+    new Rank("T", 10, 9, 11, 10),
+    new Rank("J", 11, 10, 12, 12),
+    new Rank("Q", 12, 11, 13, 15),
+    new Rank("K", 13, 12, 14, 18),
     // Default rank above
-    new Rank("A", 14, 2, 1),
+    new Rank("A", 14, 13, 2, 1),
 ];
 
 export const arbitraryTopRank = RANKS[RANKS.length - 1];
@@ -187,6 +189,10 @@ export function getNextRankUp(rank: Rank): Rank {
     return getRankFromTTR(rank.ttRankAbove);
 }
 
+export function getNextRankDown(rank: Rank): Rank {
+    return getRankFromTTR(rank.ttRankBelow);
+}
+
 export function getFullPack(): Card[] {
     const cards = [];
     const SUITS = getSuits();
@@ -216,6 +222,14 @@ export function getCardFromString(name: string): Card {
     const rank = name[0];
     const suit = name[1];
     return getCard(getRank(rank), getSuit(suit));
+}
+
+export function getNextCardUp(card: Card): Card {
+    return getCard(getNextRankUp(card.rank), card.suit);
+}
+
+export function getNextCardDown(card: Card): Card {
+    return getCard(getNextRankDown(card.rank), card.suit);
 }
 
 // suit doesn't matter here

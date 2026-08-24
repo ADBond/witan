@@ -1,4 +1,4 @@
-import { Card, Suit, Rank, arbitraryTopRank, getCard, getNextRankUp, getFullPack, getSuits, rankTTWithRespectTo } from "./card";
+import { Card, Suit, Rank, arbitraryTopRank, getCard, getNextRankUp, getFullPack, getSuits, rankTTWithRespectTo, getNextCardDown } from "./card";
 import { Player } from "./player";
 
 type trickData = {
@@ -139,6 +139,12 @@ export class Grid {
 
     setTopRank(card: Card) {
         if (this._topRank === null) {
+            this._topRank = card.rank;
+            return;
+        }
+        // if we are entering a card one above one already there, that is the top rank, we set a new top rank!
+        const cardBelow = getNextCardDown(card);
+        if (this.cards[cardBelow.toStringShort()].data !== null && Rank.rankEquals(cardBelow.rank, this.topRank)) {
             this._topRank = card.rank;
             return;
         }
