@@ -1,11 +1,13 @@
-import { Card, Suit, Rank, arbitraryTopRank, getCard, getNextRankUp, getFullPack, getSuits, rankTTWithRespectTo, getNextCardDown } from "./card";
+import { Card, Suit, Rank, arbitraryTopRank, getCard, getNextRankUp, getFullPack, getSuits, rankTTWithRespectTo, getNextCardDown, getNextCardUp } from "./card";
 import { Player } from "./player";
 
 type trickData = {
     player: Player,
     cardInTrickNumber: number,
+    touchingGrid: boolean | 'maybe',
 }
 
+// TODO: rethink model to track stops
 type CardData = {
     faceup: boolean,
     trick: trickData | null,
@@ -168,6 +170,7 @@ export class Grid {
                             newGridEntry.data.trick = {
                                 player: newGridEntry.data.trick.player.clone(),
                                 cardInTrickNumber: newGridEntry.data.trick.cardInTrickNumber,
+                                touchingGrid: newGridEntry.data.trick.touchingGrid,
                             };
                         }
                     }
@@ -184,16 +187,32 @@ export class Grid {
             throw Error(`Card already in grid ${card}`)
         }
 
+        // this card is definitely touching the grid if
+        // the card above or below is a non-trick card
+        const cardAbove = getNextCardUp(card);
+        const cardBelow = getNextCardDown(card);
+        const aboveData = this.cards[cardAbove.toStringShort()].data;
+        const belowData = this.cards[cardBelow.toStringShort()].data;
+        let touchingGrid: boolean | 'maybe' = 'maybe';
+        if (aboveData !== null && aboveData.trick === null) {
+            touchingGrid = true;
+        } else if (belowData !== null && belowData.trick === null) {
+            touchingGrid = true;
+        }
+
         this.cards[cardStr].data = {
             "faceup": true,
             "trick": {
                 "player": player,
                 "cardInTrickNumber": cardInTrickNumber,
+                "touchingGrid": touchingGrid,
             }
         }
 
         // TODO: not this, quite
-        // this.setTopRank(card);
+        if (touchingGrid) {
+            this.setTopRank(card);
+        }
     }
 
     addNeutralToGrid(card: Card): void {
@@ -218,6 +237,9 @@ export class Grid {
         this.currentTrickEntries.forEach(
             (gridEntry) => gridEntry.data!.trick = null
         )
+        // TODO: we need to go through, make 'permanent' cards that are touching grid
+        // then check if other cards are touching grid, and repeat, until we've processed
+        // probably don't need to process as we play
     }
 
     turndown(card: Card): void {
