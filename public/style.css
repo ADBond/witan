@@ -29,6 +29,7 @@ body {
 
 .card-back {
     background-image: url('back.svg');
+    background-size: 72px 96px;
 }
 
 .card-absent {
