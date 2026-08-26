@@ -361,6 +361,8 @@ export class GameState {
     }
 
     resetTrick(log: GameLog | null): void {
+        // TODO: would be nice if we could represent this as a separate state for UI
+        this.grid.resolveTrick();
         const winnerPlayer = this.trickWinnerPlayer();
         const winnerPlayerIndex = winnerPlayer.positionIndex;
         this.currentPlayerIndex = winnerPlayerIndex;
@@ -382,8 +384,6 @@ export class GameState {
         this.previousTrick = this.trickInProgress;
 
         // empty the trick, and increment the counter!
-        // TODO: need to have this before we resolve winner, but get cards first
-        // TODO: would be nice if we could represent this as a separate state for UI
         this.grid.resetTrick();
         this.trickIndex++;
         if (this.handNotFinished) {

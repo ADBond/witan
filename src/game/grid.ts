@@ -140,9 +140,14 @@ export class Grid {
     }
 
     isInPermanentGrid(card: Card): boolean {
-        // cards need to be faceup & not part of a trick
+        // cards need to be faceup &
+        // not part of a trick
+        // or part of a trick that is already touching
         const cardData = this.cards[card.toStringShort()].data;
-        return cardData !== null && cardData.faceup && cardData.trick === null;
+        return (cardData !== null && cardData.faceup) && (
+            cardData.trick === null ||
+            cardData.trick.touchingGrid
+        );
     }
 
     isTouchingGrid(card: Card): boolean {
@@ -204,14 +209,12 @@ export class Grid {
             throw Error(`Card already in grid ${card}`)
         }
 
-        const touchingGrid = this.isTouchingGrid(card);
-
         this.cards[cardStr].data = {
             "faceup": true,
             "trick": {
                 "player": player,
                 "cardInTrickNumber": cardInTrickNumber,
-                "touchingGrid": touchingGrid,
+                "touchingGrid": false,
             }
         }
 
@@ -237,45 +240,42 @@ export class Grid {
         cards.forEach(card => this.addNeutralToGrid(card));
     }
 
-    resetTrick(): void {
+    resolveTrick(): void {
         // we need to go through, make 'permanent' cards that are touching grid
         // then check if other cards are touching grid, and repeat, until we've processed all
         const trickEntries = this.currentTrickEntries;
         let unprocessedEntries = trickEntries;
-        let counter = 0;
         while (unprocessedEntries.length > 0) {
             let resolvedAny = false;
             for (const gridEntry of unprocessedEntries) {
                 const card = gridEntry.card;
                 if (this.isTouchingGrid(card)) {
                     resolvedAny = true;
-                    gridEntry.data!.trick = null;
+                    gridEntry.data!.trick!.touchingGrid = true;
                     this.setTopRank(card);
                     // TODO: still need to retain stop info, somewhere
                 }
             }
-            unprocessedEntries = trickEntries.filter(ge => ge.data!.trick !== null);
+            unprocessedEntries = trickEntries.filter(ge => !ge.data!.trick!.touchingGrid);
             // if we didn't resolve any, then none left are touching grid
             // stop trying
             if (!resolvedAny) {
-                break;
-            }
-            counter++;
-            if (counter > 20) {
-                console.log("whoopsie!");
-                console.log(trickEntries);
-                console.log(trickEntries.filter(ge => ge.data!.trick !== null).length);
+                console.log("Done checking");
                 break;
             }
         }
         unprocessedEntries.forEach(
             (gridEntry) => {
                 const data = gridEntry.data!;
-                data.trick = null;
                 data.faceup = false;
             }
         )
+    }
 
+    resetTrick(): void {
+        this.currentTrickEntries.forEach(
+            gridEntry => gridEntry.data!.trick = null
+        );
     }
 
     turndown(card: Card): void {
