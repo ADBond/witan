@@ -4,7 +4,7 @@ import { Player } from "./player";
 type trickData = {
     player: Player,
     cardInTrickNumber: number,
-    touchingGrid: boolean | 'maybe',
+    touchingGrid: boolean,
 }
 
 // TODO: rethink model to track stops
@@ -139,6 +139,20 @@ export class Grid {
         return getNextRankUp(this.topRank)
     }
 
+    isInPermanentGrid(card: Card): boolean {
+        // cards need to be faceup & not part of a trick
+        const cardData = this.cards[card.toStringShort()].data;
+        return cardData !== null && cardData.faceup && cardData.trick === null;
+    }
+
+    isTouchingGrid(card: Card): boolean {
+        // this card is definitely touching the grid if
+        // the card above or below is in permanent grid
+        const cardAbove = getNextCardUp(card);
+        const cardBelow = getNextCardDown(card);
+        return this.isInPermanentGrid(cardAbove) || this.isInPermanentGrid(cardBelow);
+    }
+
     setTopRank(card: Card) {
         if (this._topRank === null) {
             this._topRank = card.rank;
@@ -187,18 +201,7 @@ export class Grid {
             throw Error(`Card already in grid ${card}`)
         }
 
-        // this card is definitely touching the grid if
-        // the card above or below is a non-trick card
-        const cardAbove = getNextCardUp(card);
-        const cardBelow = getNextCardDown(card);
-        const aboveData = this.cards[cardAbove.toStringShort()].data;
-        const belowData = this.cards[cardBelow.toStringShort()].data;
-        let touchingGrid: boolean | 'maybe' = 'maybe';
-        if (aboveData !== null && aboveData.trick === null) {
-            touchingGrid = true;
-        } else if (belowData !== null && belowData.trick === null) {
-            touchingGrid = true;
-        }
+        const touchingGrid = this.isTouchingGrid(card);
 
         this.cards[cardStr].data = {
             "faceup": true,
@@ -233,12 +236,44 @@ export class Grid {
     }
 
     resetTrick(): void {
-        // TODO: turndown isolated cards
-        this.currentTrickEntries.forEach(
-            (gridEntry) => gridEntry.data!.trick = null
+        // we need to go through, make 'permanent' cards that are touching grid
+        // then check if other cards are touching grid, and repeat, until we've processed all
+        const trickEntries = this.currentTrickEntries;
+        let unprocessedEntries = trickEntries;
+        let counter = 0;
+        while (unprocessedEntries.length > 0) {
+            let resolvedAny = false;
+            for (const gridEntry of unprocessedEntries) {
+                const card = gridEntry.card;
+                if (this.isTouchingGrid(card)) {
+                    resolvedAny = true;
+                    gridEntry.data!.trick = null;
+                    // TODO: still need to retain stop info, somewhere
+                }
+            }
+            unprocessedEntries = trickEntries.filter(ge => ge.data!.trick !== null);
+            // if we didn't resolve any, then none left are touching grid
+            // stop trying
+            if (!resolvedAny) {
+                break;
+            }
+            counter++;
+            if (counter > 20) {
+                console.log("whoopsie!");
+                console.log(trickEntries);
+                console.log(trickEntries.filter(ge => ge.data!.trick !== null).length);
+                break;
+            }
+        }
+        trickEntries.forEach(
+            (gridEntry) => {
+                const data = gridEntry.data!;
+                if (data.trick !== null){
+                    data.trick = null;
+                    data.faceup = false;
+                }
+            }
         )
-        // TODO: we need to go through, make 'permanent' cards that are touching grid
-        // then check if other cards are touching grid, and repeat, until we've processed
         // probably don't need to process as we play
     }
 
