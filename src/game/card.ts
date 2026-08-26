@@ -114,16 +114,16 @@ export class Card {
         return lowestCards;
     }
 
-    static highestCards(cards: Card[]): Card[] {
-        const highestRank = Math.max(...cards.map(card => card.rank.trickTakingRank));
+    static highestCards(cards: Card[], topRank: Rank): Card[] {
+        const highestRank = Math.max(...cards.map(card => rankTTWithRespectTo(card.rank, topRank)));
         const highestCards = cards.filter(
-            card => card.rank.trickTakingRank === highestRank
+            card => rankTTWithRespectTo(card.rank, topRank) === highestRank
         )
         return highestCards;
     }
 
-    static singleHighestCard(cards: Card[]): Card {
-        const highestCards = this.highestCards(cards);
+    static singleHighestCard(cards: Card[], topRank: Rank): Card {
+        const highestCards = this.highestCards(cards, topRank);
         if (highestCards.length > 1) {
             // TODO: error
             console.log(`Too many highest cards: ${highestCards}`);

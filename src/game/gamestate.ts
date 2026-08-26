@@ -221,22 +221,30 @@ export class GameState {
 
     public trickWinnerPlayer(): Player {
         const winningCardPlay = this.trickInProgress.filter(
-            ([card, player]) => Card.cardEquals(card, this.winningCard())
+            ([card, player]) => Card.cardEquals(card, this.winningCard(this.grid.trumpSuit))
         );
         // TODO: length check?
         const trickWinner = winningCardPlay[0][1];
         return trickWinner;
     }
 
-
-    public winningCard(): Card {
+    public winningCard(trumpSuit: Suit): Card {
+        // straight from Scalade
+        const trumpCardsPlayed = this.trickInProgress.filter(
+            ([card, _player]) => Suit.suitEquals(card.suit, trumpSuit)
+        );
         let winningCard: Card;
-        // TODO: actual winning logic
-        winningCard = this.trickInProgressCards[0];
-
+        const topRank = this.grid.topRank;
+        if (trumpCardsPlayed.length > 0) {
+            winningCard = Card.singleHighestCard(trumpCardsPlayed.map(([card, _player]) => card), topRank);
+        } else {
+            const ledCardsPlayed = this.trickInProgress.filter(
+                ([card, _player]) => Suit.suitEquals(card.suit, this.currentLedSuit as Suit)
+            );
+            winningCard = Card.singleHighestCard(ledCardsPlayed.map(([card, _player]) => card), topRank)
+        }
         return winningCard;
     }
-
 
     get handNotFinished(): boolean {
         return this.players.map(

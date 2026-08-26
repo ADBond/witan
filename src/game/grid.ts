@@ -139,6 +139,14 @@ export class Grid {
         return getNextRankUp(this.topRank)
     }
 
+    get trumpSuit(): Suit {
+        // current rules:
+        // shortest suit
+        // ties broken by a fixed suit hierarchy
+        // TODO - for now we fix a single trump while we hook up the business
+        return getSuits()[0];
+    }
+
     isInPermanentGrid(card: Card): boolean {
         // cards need to be faceup &
         // not part of a trick
@@ -260,7 +268,6 @@ export class Grid {
             // if we didn't resolve any, then none left are touching grid
             // stop trying
             if (!resolvedAny) {
-                console.log("Done checking");
                 break;
             }
         }
