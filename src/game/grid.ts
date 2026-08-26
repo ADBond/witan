@@ -154,13 +154,16 @@ export class Grid {
     }
 
     setTopRank(card: Card) {
+        // this only works if:
+        // - card below is permanent
+        // - card below is already the top rank!
         if (this._topRank === null) {
             this._topRank = card.rank;
             return;
         }
         // if we are entering a card one above one already there, that is the top rank, we set a new top rank!
         const cardBelow = getNextCardDown(card);
-        if (this.cards[cardBelow.toStringShort()].data !== null && Rank.rankEquals(cardBelow.rank, this.topRank)) {
+        if (this.isInPermanentGrid(cardBelow) && Rank.rankEquals(cardBelow.rank, this.topRank)) {
             this._topRank = card.rank;
             return;
         }
@@ -212,10 +215,6 @@ export class Grid {
             }
         }
 
-        // TODO: not this, quite
-        if (touchingGrid) {
-            this.setTopRank(card);
-        }
     }
 
     addNeutralToGrid(card: Card): void {
@@ -232,6 +231,9 @@ export class Grid {
     }
 
     addNeutralsToGrid(cards: Card[]): void {
+        // it probably breaks the logic to add neutrals of an existing suit
+        // that aren't above / below existing cards
+        // we do not currently enforce this in any way
         cards.forEach(card => this.addNeutralToGrid(card));
     }
 
@@ -248,6 +250,7 @@ export class Grid {
                 if (this.isTouchingGrid(card)) {
                     resolvedAny = true;
                     gridEntry.data!.trick = null;
+                    this.setTopRank(card);
                     // TODO: still need to retain stop info, somewhere
                 }
             }
@@ -265,16 +268,14 @@ export class Grid {
                 break;
             }
         }
-        trickEntries.forEach(
+        unprocessedEntries.forEach(
             (gridEntry) => {
                 const data = gridEntry.data!;
-                if (data.trick !== null){
-                    data.trick = null;
-                    data.faceup = false;
-                }
+                data.trick = null;
+                data.faceup = false;
             }
         )
-        // probably don't need to process as we play
+
     }
 
     turndown(card: Card): void {
