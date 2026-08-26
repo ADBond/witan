@@ -149,11 +149,13 @@ export class GameState {
             legalCards = hand;
         } else {
             // must follow suit if we can
-            // TODO: and adjoining
             legalCards = hand.filter(card => Suit.suitEquals(card.suit, ledSuit));
             if (legalCards.length === 0) {
                 // if we have no cards of led suit, anything is legal
                 legalCards = hand;
+            } else {
+                // if we have cards of suit led, we can also play adjoining cards
+                // TODO this will be annoying
             }
         }
         return legalCards.map(card => card.index);
