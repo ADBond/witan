@@ -1,4 +1,4 @@
-import { createCardElement } from './ui';
+import { createCardElement, createSuitElement } from './ui';
 import { GameStateForUI, state } from '../game/gamestate';
 import { PlayerName, playerNameArr } from '../game/player';
 import { renderGrid } from './grid';
@@ -24,7 +24,9 @@ export async function renderState(state: GameStateForUI) {
     )
   });
 
-
+  const trumpEl = document.getElementById('trumps')!;
+  trumpEl.innerHTML = '';
+  trumpEl.appendChild(createSuitElement(state.grid.trumpSuit.toStringShort()));
 
   // game status - config
   document.getElementById('config')!.innerText = `playing to ${state.target}`;

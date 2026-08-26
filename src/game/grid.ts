@@ -118,6 +118,12 @@ export class Grid {
         );
     }
 
+    get permanentGrid(): GridEntry[] {
+        return this.allCards.filter(
+            gridEntry => this.isInPermanentGrid(gridEntry.card)
+        );
+    }
+
 
 // what about something like:
 // 234
@@ -143,8 +149,21 @@ export class Grid {
         // current rules:
         // shortest suit
         // ties broken by a fixed suit hierarchy
-        // TODO - for now we fix a single trump while we hook up the business
-        return getSuits()[0];
+        const permanentGrid = this.permanentGrid;
+        const allSuits = getSuits();
+        const suitLengths: [Suit, number][] = allSuits.map(
+            suit => [
+                suit,
+                permanentGrid.filter(
+                    gridEntry => Suit.suitEquals(gridEntry.card.suit, suit)
+                ).length
+            ]
+        )
+        suitLengths.sort(
+            (s1, s2) => (-10 * s1[1] + s1[0].rankForTrumpPreference) - (-10 * s2[1] + s2[0].rankForTrumpPreference)
+        )
+        // final entry is our trump suit
+        return suitLengths[suitLengths.length - 1][0];
     }
 
     isInPermanentGrid(card: Card): boolean {
