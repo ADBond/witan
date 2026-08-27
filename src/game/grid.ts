@@ -148,22 +148,31 @@ export class Grid {
     get trumpSuit(): Suit {
         // current rules:
         // shortest suit
+        // lowest rank
         // ties broken by a fixed suit hierarchy
         const permanentGrid = this.permanentGrid;
         const allSuits = getSuits();
-        const suitLengths: [Suit, number][] = allSuits.map(
-            suit => [
-                suit,
-                permanentGrid.filter(
+        const suitsData: [Suit, number, number][] = allSuits.map(
+            suit => {
+                const suitGrid = permanentGrid.filter(
                     gridEntry => Suit.suitEquals(gridEntry.card.suit, suit)
-                ).length
-            ]
+                );
+                return [
+                    suit,
+                    suitGrid.length,
+                    Math.min(
+                        ...suitGrid.map(
+                            gridEntry => rankTTWithRespectTo(gridEntry.card.rank, this.topRank)
+                        )
+                    ),
+                ];
+            }
         )
-        suitLengths.sort(
-            (s1, s2) => (-10 * s1[1] + s1[0].rankForTrumpPreference) - (-10 * s2[1] + s2[0].rankForTrumpPreference)
+        suitsData.sort(
+            (s1, s2) => (-1000 * s1[1] - 10 * s1[2] + s1[0].rankForTrumpPreference) - (-1000 * s2[1] - 10 * s2[2] + s2[0].rankForTrumpPreference)
         )
         // final entry is our trump suit
-        return suitLengths[suitLengths.length - 1][0];
+        return suitsData[suitsData.length - 1][0];
     }
 
     isInPermanentGrid(card: Card): boolean {
