@@ -254,6 +254,7 @@ export class Grid {
             }
         }
 
+        this.markTouchingCards();
     }
 
     addNeutralToGrid(card: Card): void {
@@ -276,11 +277,13 @@ export class Grid {
         cards.forEach(card => this.addNeutralToGrid(card));
     }
 
-    resolveTrick(): void {
+    markTouchingCards(): GridEntry[] {
         // we need to go through, make 'permanent' cards that are touching grid
         // then check if other cards are touching grid, and repeat, until we've processed all
+        // make sure any cards in trick that are not marked as touching the grid
+        // but are, become correctly marked
         const trickEntries = this.currentTrickEntries;
-        let unprocessedEntries = trickEntries;
+        let unprocessedEntries = trickEntries.filter(ge => !ge.data!.trick!.touchingGrid);
         while (unprocessedEntries.length > 0) {
             let resolvedAny = false;
             for (const gridEntry of unprocessedEntries) {
@@ -299,6 +302,13 @@ export class Grid {
                 break;
             }
         }
+        return unprocessedEntries;
+    }
+
+    resolveTrick(): void {
+        // turn down any cards that are not touching grid once the trick is finished
+        const trickEntries = this.currentTrickEntries;
+        const unprocessedEntries = trickEntries.filter(ge => !ge.data!.trick!.touchingGrid);
         unprocessedEntries.forEach(
             (gridEntry) => {
                 const data = gridEntry.data!;
