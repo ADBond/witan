@@ -175,6 +175,42 @@ export class Grid {
         return suitsData[suitsData.length - 1][0];
     }
 
+    get adjoiningCards(): Card[] {
+        // TODO: when we wrap, are there problems?
+        // TODO: all fine when we adjoin via a trick card?
+        const permanentGrid = this.permanentGrid;
+        const allSuits = getSuits();
+        const adjoiningCards: [Card, Card][] = allSuits.map(
+            suit => {
+                const suitGrid = permanentGrid.filter(
+                    gridEntry => Suit.suitEquals(gridEntry.card.suit, suit)
+                );
+                const minRankTTR = Math.min(
+                    ...suitGrid.map(
+                        gridEntry => rankTTWithRespectTo(gridEntry.card.rank, this.topRank)
+                    )
+                );
+
+                const maxRankTTR = Math.max(
+                    ...suitGrid.map(
+                        gridEntry => rankTTWithRespectTo(gridEntry.card.rank, this.topRank)
+                    )
+                );
+                const topCard = suitGrid.filter(
+                    gridEntry => rankTTWithRespectTo(gridEntry.card.rank, this.topRank) === maxRankTTR
+                )[0].card;
+                const bottomCard = suitGrid.filter(
+                    gridEntry => rankTTWithRespectTo(gridEntry.card.rank, this.topRank) === minRankTTR
+                )[0].card
+                return [
+                    getNextCardUp(topCard),
+                    getNextCardDown(bottomCard),
+                ];
+            }
+        );
+        return adjoiningCards.flat();
+    }
+
     isInPermanentGrid(card: Card): boolean {
         // cards need to be faceup &
         // not part of a trick

@@ -155,7 +155,12 @@ export class GameState {
                 legalCards = hand;
             } else {
                 // if we have cards of suit led, we can also play adjoining cards
-                // TODO this will be annoying
+                const adjoiningInHand = hand.filter(
+                    card => this.grid.adjoiningCards.map(card => card.index).includes(card.index)
+                );
+                legalCards.push(
+                    ...adjoiningInHand
+                );
             }
         }
         return legalCards.map(card => card.index);
