@@ -88,3 +88,19 @@ body {
     margin-top: 30px;
     height: 110px;
 }
+
+.card-legal {
+  background-color: #ffd;
+  background-blend-mode: multiply;
+}
+
+.card-not-legal {
+  background-color: #aaa;
+  background-blend-mode: multiply;
+  cursor: default !important;
+}
+
+.hand .card-not-legal:hover {
+    transform: none;
+    border-color: none;
+}

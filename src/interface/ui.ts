@@ -14,7 +14,7 @@ const suitMap: Record<Suit, number> = {
 const cardWidth = 72;
 const cardHeight = 96;
 
-export function createCardElement(card: string, onClick?: () => void): HTMLElement {
+export function createCardElement(card: string, onClick?: () => void, legal?: boolean): HTMLElement {
   const span = document.createElement('span');
   span.className = 'card';
   const match = card.match(/^([0-9TJQKA])([SHDC])$/);
@@ -31,6 +31,13 @@ export function createCardElement(card: string, onClick?: () => void): HTMLEleme
   }
 
   if (onClick) span.onclick = () => onClick();
+  if (legal === undefined) {
+    // do nowt
+  } else if (legal) {
+    span.classList.add("card-legal");
+  } else {
+    span.classList.add("card-not-legal");
+  }
   return span;
 }
 

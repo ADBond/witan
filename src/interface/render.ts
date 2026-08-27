@@ -20,7 +20,11 @@ export async function renderState(state: GameStateForUI) {
   handEl.innerHTML = '';
   playerHand.forEach(card => {
     handEl.appendChild(
-      createCardElement(card.toStringShort(), state.whoseTurn === "player" ? (() => onHumanPlay(card)) : undefined)
+      createCardElement(
+        card.toStringShort(),
+        state.whoseTurn === "player" ? (() => onHumanPlay(card)) : undefined,
+        state.legalCardIndices.includes(card.index),
+      )
     )
   });
 

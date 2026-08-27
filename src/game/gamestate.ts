@@ -429,6 +429,7 @@ export class GameState {
     getStateForUI(): GameStateForUI {
         return ({
             hands: { comp1: [], player: this.currentState === "hand_complete" ? [] : this.humanHand.slice(), comp2: [] },
+            legalCardIndices: this.legalMoveIndices,
             grid: this.grid.clone(),
 
             scores: Object.fromEntries(
@@ -454,6 +455,7 @@ export class GameState {
 
 export interface GameStateForUI {
     hands: Record<PlayerName, Card[]>;
+    legalCardIndices: number[],
     grid: Grid,
 
     scores: Record<PlayerName, number>,
