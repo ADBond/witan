@@ -460,7 +460,7 @@ export class GameState {
         this.previousTrick = this.trickInProgress;
 
         // empty the trick, and increment the counter!
-        this.grid.resetTrick();
+        this.grid.resetTrick(winnerPlayer);
         this.trickIndex++;
         if (this.handNotFinished) {
             this.currentState = "play_card";

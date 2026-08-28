@@ -75,6 +75,10 @@ body {
     background-color: #00a;
 }
 
+.marker-owned {
+    transform: scale(0.5) translateY(30px);
+}
+
 .hand .card {
     cursor: pointer;
 }

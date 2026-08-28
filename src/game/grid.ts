@@ -372,9 +372,12 @@ export class Grid {
         )
     }
 
-    resetTrick(): void {
+    resetTrick(winner: Player): void {
         this.currentTrickEntries.forEach(
-            gridEntry => gridEntry.data!.trick = null
+            gridEntry => {
+                gridEntry.data!.trick = null;
+                gridEntry.data!.players!.playerOwned = winner;
+            }
         );
     }
 

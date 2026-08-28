@@ -33,16 +33,25 @@ export function renderGrid(grid: Grid) {
             }
             const el = createCardElement(cardSpec);
             parentEl.appendChild(el);
-            if (gridEntry.data !== null && gridEntry.data.trick !== null) {
-                const player = gridEntry.data.players!.playerPlayed;
-                const lead = (gridEntry.data.trick.cardInTrickNumber === 1);
-                const markerEl = document.createElement('div');
-                markerEl.classList.add('marker');
-                markerEl.classList.add(`marker-${player.name}`);
-                if (lead) {
-                    markerEl.classList.add('marker-lead');
+            if (gridEntry.data !== null) {
+                if (gridEntry.data.trick !== null) {
+                    const player = gridEntry.data.players!.playerPlayed;
+                    const lead = (gridEntry.data.trick.cardInTrickNumber === 1);
+                    const markerEl = document.createElement('div');
+                    markerEl.classList.add('marker');
+                    markerEl.classList.add(`marker-${player.name}`);
+                    if (lead) {
+                        markerEl.classList.add('marker-lead');
+                    }
+                    el.appendChild(markerEl);
+                } else if (gridEntry.data.players !== null && !gridEntry.data.faceup) {
+                    const owner = gridEntry.data.players.playerOwned!;
+                    const markerEl = document.createElement('div');
+                    markerEl.classList.add('marker');
+                    markerEl.classList.add(`marker-${owner.name}`);
+                    markerEl.classList.add(`marker-owned`);
+                    el.appendChild(markerEl);
                 }
-                el.appendChild(markerEl);
             }
         }
     );
