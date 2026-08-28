@@ -73,7 +73,7 @@ function determiniseNaive(state: GameState, agent: ComputerAgent): GameState {
     const unknownCards = state.pack.filter(
         card => 
             (!state.currentPlayerHand.some(handCard => Card.cardEquals(card, handCard))) &&
-            (!state.playedCards.some(playedCard => Card.cardEquals(card, playedCard)))
+            (!state.tableCards.some(playedCard => Card.cardEquals(card, playedCard)))
     )
     shuffle(unknownCards);
     for (let playerIndex = 0; playerIndex < state.numPlayers; playerIndex++) {

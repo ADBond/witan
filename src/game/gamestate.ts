@@ -132,6 +132,14 @@ export class GameState {
         );
     }
 
+    get tableCards(): Card[] {
+        return this.grid.allCards.filter(
+            gridEntry => gridEntry.data !== null
+        ).map(
+            gridEntry => gridEntry.card
+        );
+    }
+
     get currentLedSuit(): Suit | null {
         const trickInProgressCards = this.trickInProgressCards;
         if (trickInProgressCards.length === 0) {
