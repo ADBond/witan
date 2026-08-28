@@ -34,7 +34,7 @@ export function renderGrid(grid: Grid) {
             const el = createCardElement(cardSpec);
             parentEl.appendChild(el);
             if (gridEntry.data !== null && gridEntry.data.trick !== null) {
-                const player = gridEntry.data.trick.player;
+                const player = gridEntry.data.players!.playerPlayed;
                 const lead = (gridEntry.data.trick.cardInTrickNumber === 1);
                 const markerEl = document.createElement('div');
                 markerEl.classList.add('marker');

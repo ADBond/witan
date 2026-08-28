@@ -2,15 +2,20 @@ import { Card, Suit, Rank, arbitraryTopRank, getCard, getNextRankUp, getFullPack
 import { Player } from "./player";
 
 type trickData = {
-    player: Player,
     cardInTrickNumber: number,
     touchingGrid: boolean,
+}
+
+type PlayerData = {
+    playerPlayed: Player,
+    playerOwned: Player | null,
 }
 
 // TODO: rethink model to track stops
 type CardData = {
     faceup: boolean,
     trick: trickData | null,
+    players: PlayerData | null,
 }
 
 type GridEntry = {
@@ -62,7 +67,8 @@ export class Grid {
         const gridJustTrick = this.currentTrickEntries;
         gridJustTrick.sort((e1, e2) => e1.data!.trick!.cardInTrickNumber! - e2.data!.trick!.cardInTrickNumber!);
         return gridJustTrick.map(
-            gridEntry => [gridEntry.card, gridEntry.data!.trick!.player]
+            // TODO: this is less direct now...
+            gridEntry => [gridEntry.card, gridEntry.data!.players!.playerPlayed]
         )
     }
 
@@ -259,12 +265,21 @@ export class Grid {
                         newGridEntry.data = {
                             faceup: newGridEntry.data.faceup,
                             trick: newGridEntry.data.trick,
+                            players: newGridEntry.data.players,
                         }
                         if (newGridEntry.data.trick !== null) {
                             newGridEntry.data.trick = {
-                                player: newGridEntry.data.trick.player.clone(),
                                 cardInTrickNumber: newGridEntry.data.trick.cardInTrickNumber,
                                 touchingGrid: newGridEntry.data.trick.touchingGrid,
+                            };
+                        }
+                        if (newGridEntry.data.players !== null) {
+                            const owner = newGridEntry.data.players.playerOwned;
+                            newGridEntry.data.players = {
+                                playerOwned: (
+                                    owner === null ? owner : owner.clone()
+                                ),
+                                playerPlayed: newGridEntry.data.players.playerPlayed.clone(),
                             };
                         }
                     }
@@ -284,9 +299,12 @@ export class Grid {
         this.cards[cardStr].data = {
             "faceup": true,
             "trick": {
-                "player": player,
                 "cardInTrickNumber": cardInTrickNumber,
                 "touchingGrid": false,
+            },
+            "players": {
+                "playerPlayed": player,
+                "playerOwned": null,
             }
         }
 
@@ -301,6 +319,7 @@ export class Grid {
         this.cards[cardStr].data = {
             "faceup": true,
             "trick": null,
+            "players": null,
         };
 
         this.setTopRank(card);
