@@ -3,7 +3,7 @@ import { GameLog, sendGameLog } from "./log";
 import { AgentName } from "./agent/agent";
 
 export const defaultConfig: GameConfig = {
-  targetScore: 121,
+  targetScore: 601,
 }
 
 function randomID(): string {
