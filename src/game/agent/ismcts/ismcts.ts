@@ -201,7 +201,8 @@ export async function ismcts(
 }
 
 function zeroSum(arr: number[]): number[] {
+    const total = arr.reduce((x, y) => x + y, 0);
     return arr.map(
-        (val, idx) => val - arr[(idx + 1) % arr.length]
+        (val) => val - (total/arr.length)
     );
 }
