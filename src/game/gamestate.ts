@@ -96,6 +96,7 @@ export class GameState {
                 this.resetTrick(log);
                 break;
             case 'hand_complete':
+                // TODO: hand scores - downcards + stops
                 this.dealerIndex = this.getNextPlayerIndex(this.dealerIndex);
 
                 if (log !== null) {
