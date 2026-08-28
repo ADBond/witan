@@ -12,6 +12,8 @@
 ## Features
 
 * Some score details
+* Previous trick (+ trump suit!)
+* Colour score table to match player chips
 
 ## Bugs
 
