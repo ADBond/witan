@@ -5,6 +5,11 @@ import { Agent } from "./agent/agent";
 export const playerNameArr = ['player', 'comp1', 'comp2'] as const;
 export type PlayerName = typeof playerNameArr[number];
 
+export type TeamName = (
+    'player' |
+    'comp1' |
+    'comp2'
+);
 
 export class Player {
     constructor(

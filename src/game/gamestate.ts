@@ -1,5 +1,5 @@
 import { Card, Suit, getCardFromString, getFullPack, shuffle } from "./card";
-import { Player, PlayerName, playerNameArr } from "./player";
+import { Player, PlayerName, TeamName, playerNameArr } from "./player";
 import { Grid } from "./grid";
 import { Agent, AgentName, agentLookup } from "./agent/agent";
 import { GameLog } from "./log";
@@ -172,6 +172,46 @@ export class GameState {
         )[0];
     }
 
+
+    getPlayerTeam(playerName: PlayerName): TeamName {
+        switch (playerName) {
+            case 'player':
+                switch (this.numPlayers) {
+                    case 3:
+                        return 'player';
+                    default:
+                        throw Error(`Unsupported player count: ${this.numPlayers}`);
+                }
+                break;
+            case 'comp1':
+                switch (this.numPlayers) {
+                    case 3:
+                        return 'comp1';
+                    default:
+                        throw Error(`Unsupported player count: ${this.numPlayers}`);
+                }
+                break;
+            case 'comp2':
+                switch (this.numPlayers) {
+                    case 3:
+                        return 'comp2';
+                    default:
+                        throw Error(`Unsupported player count: ${this.numPlayers}`);
+                }
+                break;
+        }
+    }
+
+    getTeamPlayers(teamName: TeamName): Player[] {
+        return this.players.filter(
+        player => this.getPlayerTeam(player.name) === teamName
+        );
+    }
+
+    getTeamScore(teamName: TeamName): number {
+        return this.getTeamPlayers(teamName).map(p => p.score).reduce((total, value) => total + value, 0);
+    }
+
     get prevTrickScores(): number[] {
         return this.players.map(player => player.previousScore);
     }
@@ -220,6 +260,19 @@ export class GameState {
 
     get numPlayers(): number {
         return this.players.length;
+    }
+
+    get names(): PlayerName[] {
+        return this.players.map(player => player.name);
+    }
+
+    get teamNames(): TeamName[] {
+        switch (this.numPlayers) {
+        case 3:
+            return ['player', 'comp1', 'comp2'];
+        default:
+            throw Error(`Unsupported player count: ${this.numPlayers}`);
+        } 
     }
 
     getNextPlayerIndex(playerIndex: number): number {
@@ -410,7 +463,13 @@ export class GameState {
 
     updateScores(winnerPlayerIndex: number): number {
 
-        const trickValue = 10;  // TODO: trick value
+        const trickValue = this.grid.currentTrickEntries.filter(
+            gridEntry => gridEntry.data!.trick!.touchingGrid
+        ).map(
+            gridEntry => gridEntry.card.rank.count_value
+        ).reduce(
+            (x, y) => x + y, 0
+        );
         // update the scores
         this.players[winnerPlayerIndex].scores.push(trickValue);
         // other players explicitly score 0 !
@@ -434,19 +493,37 @@ export class GameState {
     getStateForUI(): GameStateForUI {
         return ({
             hands: { comp1: [], player: this.currentState === "hand_complete" ? [] : this.humanHand.slice(), comp2: [] },
+
+            playerNames: this.names,
+            teamNames: this.teamNames,
+
             legalCardIndices: this.legalMoveIndices,
             grid: this.grid.clone(),
 
             scores: Object.fromEntries(
-                this.players.map(
-                    (player) => [player.name, player.score]
-               )
-            ) as Record<PlayerName, number>,
-            prevScores: Object.fromEntries(
-                this.players.map(
-                    (player) => [player.name, player.previousScore]
-               )
-            ) as Record<PlayerName, number>,
+                this.teamNames.map(
+                    (teamName): [TeamName, number] => {
+                        return [
+                        teamName,
+                        this.getTeamScore(teamName),
+                        ]
+                    }
+                )
+            ),
+            scoresPrev: Object.fromEntries(
+                this.teamNames.map(
+                    (teamName): [TeamName, number] => {
+                        return [
+                        teamName,
+                        this.getTeamPlayers(teamName).map(
+                            p => p.previousScore
+                        ).reduce(
+                            (total, value) => total + value, 0
+                        ),
+                        ]
+                    }
+                )
+            ),
 
             gameState: this.currentState,
             whoseTurn: this.currentPlayer.name,
@@ -463,8 +540,11 @@ export interface GameStateForUI {
     legalCardIndices: number[],
     grid: Grid,
 
-    scores: Record<PlayerName, number>,
-    prevScores: Record<PlayerName, number>,
+    playerNames: PlayerName[];
+    teamNames: TeamName[];
+
+    scores: Partial<Record<TeamName, number>>;
+    scoresPrev: Partial<Record<TeamName, number>>;
 
     handNumber: number;
     trickNumber: number;

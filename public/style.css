@@ -104,3 +104,45 @@ body {
     transform: none;
     border-color: none;
 }
+
+.scores-panel {
+    position: absolute;
+    top: 50px;
+    left: 30px;
+    width: 200px;
+    background: #fcf;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-family: sans-serif;
+}
+
+#scores-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+#scores-table th {
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 4px;
+    border-bottom: 1px solid #ddd;
+    border-radius: 5px;
+    width: 33%;
+    background: #727;
+}
+
+#scores-table td {
+    text-align: center;
+    padding: 4px;
+    color: #000;
+}
+
+#scores-previous td {
+    font-size: 0.9rem;
+    color: #777;
+    font-style: italic;
+}
