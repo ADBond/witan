@@ -76,7 +76,14 @@ body {
 }
 
 .marker-owned {
-    transform: scale(0.5) translateY(30px);
+    transform: scale(0.5) translateY(40px);
+}
+
+.marker-stops {
+    border-radius: 0;
+    transform: scale(0.6) translateY(-110px);
+    border-color: white;
+    border-style: dashed;
 }
 
 .hand .card {

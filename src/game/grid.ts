@@ -130,6 +130,52 @@ export class Grid {
         );
     }
 
+    get possibleStops(): GridEntry[] {
+        const suits = getSuits();
+        const permanentGrid = this.permanentGrid;
+        const gridFixed = this.rankHierarchyFixed;
+        const possibleStops = suits.map(
+            suit => {
+                const stops: GridEntry[] = [];
+                const suitEntries = permanentGrid.filter(
+                    gridEntry => Suit.suitEquals(gridEntry.card.suit, suit)
+                );
+                if (suitEntries.length === 0) {
+                    // only during setup
+                    return [];
+                }
+                const bottomCardEntry = suitEntries[0];
+                const topCardEntry = suitEntries[suitEntries.length - 1];
+                const dontCheckBelow = gridFixed && Rank.rankEquals(bottomCardEntry.card.rank, this.bottomRank);
+                const dontCheckAbove = gridFixed && Rank.rankEquals(topCardEntry.card.rank, this.topRank);
+                if (!dontCheckBelow) {
+                    let lowerCardEntry = bottomCardEntry;
+                    do {
+                        lowerCardEntry = this.cards[getNextCardDown(lowerCardEntry.card).toStringShort()];
+                        if (lowerCardEntry.data !== null && !lowerCardEntry.data.faceup) {
+                            stops.push(lowerCardEntry);
+                            break;
+                        }
+                    } while (!Rank.rankEquals(lowerCardEntry.card.rank, topCardEntry.card.rank))
+                }
+                if (!dontCheckAbove) {
+                    let upperCardEntry = topCardEntry;
+                    do {
+                        upperCardEntry = this.cards[getNextCardUp(upperCardEntry.card).toStringShort()];
+                        if (upperCardEntry.data !== null && !upperCardEntry.data.faceup) {
+                            if (!stops.includes(upperCardEntry)) {
+                                stops.push(upperCardEntry);
+                            }
+                            break;
+                        }
+                    } while (!Rank.rankEquals(upperCardEntry.card.rank, bottomCardEntry.card.rank))
+                }
+                return stops;
+            }
+        ).flat();
+        return possibleStops;
+    }
+
 
 // what about something like:
 // 234

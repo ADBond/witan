@@ -1,5 +1,5 @@
 import { Grid } from "../game/grid";
-import { getSuits, Suit } from "../game/card";
+import { Card, getSuits, Suit } from "../game/card";
 import { createCardElement } from "./ui";
 
 function suitRowID(suit: Suit): string {
@@ -17,7 +17,10 @@ export function renderGrid(grid: Grid) {
             boardEl.appendChild(el);
         }
     )
-    // TODO: need to order by rank
+    const possibleStops = grid.possibleStops;
+    const possibleStopCardStrings = possibleStops.map(gridEntry => gridEntry.card.toStringShort());
+    console.log("stops");
+    console.log(possibleStopCardStrings);
     // TODO: might we need a rank above AND below? can that happen?
     grid.allCards.forEach(
         gridEntry => {
@@ -51,6 +54,15 @@ export function renderGrid(grid: Grid) {
                     markerEl.classList.add(`marker-${owner.name}`);
                     markerEl.classList.add(`marker-owned`);
                     el.appendChild(markerEl);
+                    const stopEntries = possibleStops.filter(ge => Card.cardEquals(ge.card, gridEntry.card));
+                    if (stopEntries.length > 0){
+                        const stopMarkerEl = document.createElement('div');
+                        const player = gridEntry.data.players!.playerPlayed;
+                        stopMarkerEl.classList.add('marker');
+                        stopMarkerEl.classList.add(`marker-${player.name}`);
+                        stopMarkerEl.classList.add(`marker-stops`);
+                        el.appendChild(stopMarkerEl);
+                    }
                 }
             }
         }
