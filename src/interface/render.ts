@@ -59,6 +59,7 @@ export async function renderState(state: GameStateForUI) {
     (teamName) => {
       const headerEl = document.createElement('th');
       headerEl.innerText = displayNameTeam(teamName, state.playerNames.length);
+      headerEl.id = `scores-table-header-${teamName}`;
       namesHolder.appendChild(headerEl);
       const teamScoreEl = document.createElement('td');
       teamScoreEl.id = `score-${teamName}`;
@@ -78,8 +79,8 @@ const delayMap: Record<state, number> = {
   game_initialise: 10,
   play_card: 700,
   trick_complete: 1700,
-  hand_complete: 3000,
-  new_hand: 10,
+  hand_complete: 5000,
+  new_hand: 500,
   game_complete: 10,
 }
 

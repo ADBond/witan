@@ -13,7 +13,7 @@
 
 * Some score details
 * Previous trick (+ trump suit!)
-* Colour score table to match player chips
+* ~~Colour score table to match player chips~~
 * Nicer display trickpile scores
 * Sort hand more sensibly
     * Not sure what this will be -  maybe reordering constantly would be annoying? maybe fix to the starting hierarchy

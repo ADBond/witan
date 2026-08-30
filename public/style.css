@@ -136,7 +136,19 @@ body {
     border-bottom: 1px solid #ddd;
     border-radius: 5px;
     width: 33%;
-    background: #727;
+    /* background: #727; */
+}
+
+#scores-table-header-player {
+    background: #a00;
+}
+
+#scores-table-header-comp1 {
+    background: #0a0;
+}
+
+#scores-table-header-comp2 {
+    background: #00a;
 }
 
 #scores-table td {
