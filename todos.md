@@ -3,7 +3,7 @@
 ## Game aspects
 
 * Stop penalties
-* Down-card score
+* ~~Down-card score~~
 * Proper starting board
 * End the game
 * 4p version
@@ -14,6 +14,7 @@
 * Some score details
 * Previous trick (+ trump suit!)
 * Colour score table to match player chips
+* Nicer display trickpile scores
 
 ## Bugs
 

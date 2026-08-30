@@ -6,6 +6,8 @@ export const defaultConfig: GameConfig = {
   targetScore: 601,
 }
 
+export const SCORE_PER_TRICKPILE = 15;
+
 function randomID(): string {
   const theDate = new Date();
   const dateString = [

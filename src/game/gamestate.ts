@@ -1,8 +1,9 @@
-import { Card, Suit, getCardFromString, getFullPack, shuffle } from "./card";
+import { Card, Suit, getCardFromString, getFullPack, getSuits, rankTTWithRespectTo, shuffle } from "./card";
 import { Player, PlayerName, TeamName, playerNameArr } from "./player";
 import { Grid } from "./grid";
 import { Agent, AgentName, agentLookup } from "./agent/agent";
 import { GameLog } from "./log";
+import { SCORE_PER_TRICKPILE } from "./game";
 
 export type GameConfig = {
     targetScore: number,
@@ -97,6 +98,7 @@ export class GameState {
                 break;
             case 'hand_complete':
                 // TODO: hand scores - downcards + stops
+                this.updateHandScores();
                 this.dealerIndex = this.getNextPlayerIndex(this.dealerIndex);
 
                 if (log !== null) {
@@ -486,6 +488,63 @@ export class GameState {
         this.players[(winnerPlayerIndex + 2) % this.numPlayers].scores.push(0);
 
         return trickValue;
+    }
+
+    updateHandScores(): void {
+        // trickpile scores
+        const suits = getSuits();
+        // console.log(suits.map(s => s.toStringShort()));
+        const suitTrickpileCards = suits.map(
+            suit => this.grid.allCards.filter(
+                gridEntry => (
+                    gridEntry.data !== null &&
+                    !gridEntry.data.faceup &&
+                    Suit.suitEquals(gridEntry.card.suit, suit)
+                )
+            )
+        );
+        // console.log(suitTrickpileCards);
+        // console.log(suitTrickpileCards.map(geArr => geArr.map(ge => ge.card)));
+        for (const suitEntries of suitTrickpileCards) {
+            if (suitEntries.length === 0) {
+                console.log("Skipping empty suit");
+            }
+            const playersAndCards: [Player, number][] = this.players.map(
+                player => {
+                    const playerSuitCards = suitEntries.filter(
+                        gridEntry => (
+                            gridEntry.data!.players !== null &&
+                            gridEntry.data!.players.playerOwned!.name === player.name
+                        )
+                    ).map(
+                        gridEntry => gridEntry.card
+                    );
+                    const maxRank = (
+                        playerSuitCards.length === 0 ? 200 : (
+                            Math.max(
+                                ...playerSuitCards.map(
+                                    c => rankTTWithRespectTo(c.rank, this.grid.topRank)
+                                )
+                            )
+                        )
+                    );
+                    const evalFunction = 100*playerSuitCards.length - maxRank;
+                    console.log(player.name);
+                    // console.log(playerSuitCards);
+                    console.log(`${playerSuitCards.length}, ${maxRank} -> ${evalFunction}`);
+                    return [
+                        player,
+                        evalFunction,
+                    ];
+                }
+            );
+            playersAndCards.sort(
+                (pc1, pc2) => pc1[1] - pc2[1]
+            );
+            const playerToScore = playersAndCards[playersAndCards.length - 1][0];
+            playerToScore.scores.push(SCORE_PER_TRICKPILE);
+            console.log(`This suit is won by ${playerToScore.name} with value ${playersAndCards[playersAndCards.length - 1][1]}`);
+        }
     }
 
     get gameIsFinished(): boolean {
