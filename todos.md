@@ -4,7 +4,7 @@
 
 * Stop penalties
 * ~~Down-card score~~
-* Proper starting board
+* ~~Proper starting board~~
 * End the game
 * 4p version
 * Play high-low on 12

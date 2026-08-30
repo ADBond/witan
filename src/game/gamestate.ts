@@ -1,4 +1,4 @@
-import { Card, Suit, getCardFromString, getFullPack, getSuits, rankTTWithRespectTo, shuffle } from "./card";
+import { Card, Suit, getCard, getCardFromString, getFullPack, getSuits, rankTTWithRespectTo, shuffle } from "./card";
 import { Player, PlayerName, TeamName, playerNameArr } from "./player";
 import { Grid } from "./grid";
 import { Agent, AgentName, agentLookup } from "./agent/agent";
@@ -118,6 +118,10 @@ export class GameState {
     }
 
     get cardsPerHand(): number {
+        return 13;
+    }
+
+    get numStartingCards(): number {
         return 13;
     }
 
@@ -395,7 +399,8 @@ export class GameState {
         return true;
     }
 
-    seedTable(): void {
+    seedTableFixed(): void {
+        // for testing / trying things out
         const tableCardStrings = [
             "5C", "6C", "7C", "8C",
             "8S", "9S", "TS", "JS",
@@ -406,10 +411,32 @@ export class GameState {
         this.grid.addNeutralsToGrid(tableCards);
     }
 
+    seedTable(): void {
+        let pack = getFullPack();
+        shuffle(pack);
+        const starter = pack[0];
+        const starterCards = getSuits().map(suit => getCard(starter.rank, suit));
+        this.grid.addNeutralsToGrid(starterCards);
+        // remove starters from pack, and then continue procedure proper
+        pack = pack.filter(card => !starterCards.some(starterCard => Card.cardEquals(card, starterCard)));
+        let counter = 0;
+        while (this.grid.permanentGrid.length < this.numStartingCards) {
+            const card = pack.shift();
+            if (card === undefined) throw new Error(`Ran out of cards when seeding`);
+            if (this.grid.isTouchingGrid(card)) {
+                this.grid.addNeutralToGrid(card);
+            } else {
+                pack.push(card);
+            }
+            counter++;
+        }
+        console.log(`Seeded after processing ${counter} cards`);
+    }
+
     // TODO: seed?
     dealCards(log: GameLog | null): void {
         const pack = getFullPack();
-        
+
         this.grid = new Grid();
         this.seedTable();
         const tableCards = this.grid.permanentGrid.map(ge => ge.card);
