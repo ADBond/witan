@@ -26,7 +26,7 @@ type GridEntry = {
 export class Grid {
     private cards: {[key: string]: GridEntry};
 
-    constructor(private _topRank: Rank | null = null) {
+    constructor(private _topRank: Rank | null = null, private rankHierarchyFixed: boolean = false) {
         const pack = getFullPack();
         this.cards = Object.fromEntries(
             pack.map(
@@ -151,6 +151,27 @@ export class Grid {
         return getNextRankUp(this.topRank)
     }
 
+    // get lowestRankInGrid(): Rank {
+    // }
+
+    isRankHierarchyFixed(): boolean {
+        // if the bottom rank is present in the grid, we have saturated grid.
+        // no more updating
+
+        // TODO: could do it this way if we need to implement this:
+        // return Rank.rankEquals(this.bottomRank, this.lowestRankInGrid);
+
+        const suits = getSuits();
+        const bottomRank = this.bottomRank;
+        for (const suit of suits) {
+            const bottomCard = getCard(bottomRank, suit);
+            if (this.isInPermanentGrid(bottomCard)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     get trumpSuit(): Suit {
         // current rules:
         // shortest suit
@@ -231,8 +252,19 @@ export class Grid {
     isTouchingGrid(card: Card): boolean {
         // this card is definitely touching the grid if
         // the card above or below is in permanent grid
+        // TODO: if we are fixed, don't wraparound
         const cardAbove = getNextCardUp(card);
         const cardBelow = getNextCardDown(card);
+        if (this.rankHierarchyFixed) {
+            // grid fixed, if we are trying to play a top card, don't check above
+            if (Rank.rankEquals(card.rank, this.topRank)){
+                return this.isInPermanentGrid(cardBelow);
+            // if we're playing bottom, don't check below
+            } else if (Rank.rankEquals(card.rank, this.bottomRank)) {
+                return this.isInPermanentGrid(cardAbove);
+            }
+        }
+        // if it's not fixed yet, check both sides
         return this.isInPermanentGrid(cardAbove) || this.isInPermanentGrid(cardBelow);
     }
 
@@ -244,6 +276,9 @@ export class Grid {
             this._topRank = card.rank;
             return;
         }
+        if (this.rankHierarchyFixed) {
+            return;
+        }
         // if we are entering a card one above one already there, that is the top rank, we set a new top rank!
         const cardBelow = getNextCardDown(card);
         if (this.isInPermanentGrid(cardBelow) && Rank.rankEquals(cardBelow.rank, this.topRank)) {
@@ -253,7 +288,7 @@ export class Grid {
     }
 
     clone(): Grid {
-        const cloned = new Grid(this._topRank);
+        const cloned = new Grid(this._topRank, this.rankHierarchyFixed);
         cloned.cards = Object.fromEntries(
             Object.entries(this.cards).map(
                 ([cardString, gridEntry]) => {
@@ -309,6 +344,9 @@ export class Grid {
         }
 
         this.markTouchingCards();
+        if(!this.rankHierarchyFixed) {
+            this.rankHierarchyFixed = this.isRankHierarchyFixed();
+        }
     }
 
     addNeutralToGrid(card: Card): void {
@@ -321,8 +359,11 @@ export class Grid {
             "trick": null,
             "players": null,
         };
-
         this.setTopRank(card);
+        if(!this.rankHierarchyFixed) {
+            this.rankHierarchyFixed = this.isRankHierarchyFixed();
+        }
+
     }
 
     addNeutralsToGrid(cards: Card[]): void {

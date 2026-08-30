@@ -18,5 +18,5 @@
 
 ## Bugs
 
-* should not wraparound when ranks fixed - e.g. running A -> 2, if a suit has a face-down K, playing the A should not be face up just because we have the 2
-    * Top rank can get pushed to the top when it's already the bottom
+* ~~should not wraparound when ranks fixed - e.g. running A -> 2, if a suit has a face-down K, playing the A should not be face up just because we have the 2~~
+    * ~~Top rank can get pushed to the top when it's already the bottom~~
