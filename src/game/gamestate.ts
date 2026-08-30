@@ -511,6 +511,7 @@ export class GameState {
         for (const suitEntries of suitTrickpileCards) {
             if (suitEntries.length === 0) {
                 console.log("Skipping empty suit");
+                continue;
             }
             const playersAndCards: [Player, number][] = this.players.map(
                 player => {
