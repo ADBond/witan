@@ -522,7 +522,7 @@ export class GameState {
         return trickValue;
     }
 
-    updateHandScores(): void {
+    updateTrickpileScores(): void {
         // trickpile scores
         const suits = getSuits();
         // console.log(suits.map(s => s.toStringShort()));
@@ -584,6 +584,15 @@ export class GameState {
         Object.values(playerLookup).forEach(
             ([player, score]) => player.scores.push(score)
         );
+    }
+
+    updateStopsScores(): void {
+        // stub
+    }
+
+    updateHandScores(): void {
+        this.updateTrickpileScores();
+        this.updateStopsScores();
     }
 
     get gameIsFinished(): boolean {
