@@ -3,7 +3,7 @@ import { Player, PlayerName, TeamName, playerNameArr } from "./player";
 import { Grid } from "./grid";
 import { Agent, AgentName, agentLookup } from "./agent/agent";
 import { GameLog } from "./log";
-import { SCORE_PER_TRICKPILE } from "./game";
+import { SCORE_PER_STOP, SCORE_PER_TRICKPILE } from "./game";
 
 export type GameConfig = {
     targetScore: number,
@@ -587,7 +587,16 @@ export class GameState {
     }
 
     updateStopsScores(): void {
-        // stub
+        const playerLookup: {
+            [k: string]: [Player, number];
+        } = Object.fromEntries(this.players.map(p => [p.name, [p, 0]]));
+        for (const gridEntry of this.grid.possibleStops) {
+            const player = gridEntry.data!.players!.playerPlayed;
+            playerLookup[player.name][1] += SCORE_PER_STOP;
+        }
+        Object.values(playerLookup).forEach(
+            ([player, score]) => player.scores.push(score)
+        );
     }
 
     updateHandScores(): void {

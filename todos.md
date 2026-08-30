@@ -2,7 +2,7 @@
 
 ## Game aspects
 
-* Stop penalties
+* ~~Stop penalties~~
 * ~~Down-card score~~
 * ~~Proper starting board~~
 * End the game

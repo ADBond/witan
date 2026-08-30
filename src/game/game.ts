@@ -7,6 +7,7 @@ export const defaultConfig: GameConfig = {
 }
 
 export const SCORE_PER_TRICKPILE = 15;
+export const SCORE_PER_STOP = -10;
 
 function randomID(): string {
   const theDate = new Date();
