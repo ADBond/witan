@@ -395,9 +395,7 @@ export class GameState {
         return true;
     }
 
-    // TODO: seed?
-    dealCards(log: GameLog | null): void {
-        const pack = getFullPack();
+    seedTable(): void {
         const tableCardStrings = [
             "5C", "6C", "7C", "8C",
             "8S", "9S", "TS", "JS",
@@ -405,12 +403,19 @@ export class GameState {
             "7D", "8D", "9D",
         ];
         const tableCards = tableCardStrings.map(cardString => getCardFromString(cardString))
-        const toDeal = pack.filter(card => !tableCards.some(tableCard => Card.cardEquals(card, tableCard)));
-        // TODO: filter out table cards
-        // TODO: set up table cards, probably before this.
-        this.grid = new Grid();  // TODO: something else?
-        // for now just a fixed grid from a deal the other day
         this.grid.addNeutralsToGrid(tableCards);
+    }
+
+    // TODO: seed?
+    dealCards(log: GameLog | null): void {
+        const pack = getFullPack();
+        
+        this.grid = new Grid();
+        this.seedTable();
+        const tableCards = this.grid.permanentGrid.map(ge => ge.card);
+
+        const toDeal = pack.filter(card => !tableCards.some(tableCard => Card.cardEquals(card, tableCard)));
+        // for now just a fixed grid from a deal the other day
         shuffle(toDeal);
         for (let i = 0; i < 13; i++) {
             // for (const player of this.state.players) {
