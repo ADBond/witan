@@ -503,6 +503,9 @@ export class GameState {
                 )
             )
         );
+        const playerLookup: {
+            [k: string]: [Player, number];
+        } = Object.fromEntries(this.players.map(p => [p.name, [p, 0]]));
         // console.log(suitTrickpileCards);
         // console.log(suitTrickpileCards.map(geArr => geArr.map(ge => ge.card)));
         for (const suitEntries of suitTrickpileCards) {
@@ -542,9 +545,12 @@ export class GameState {
                 (pc1, pc2) => pc1[1] - pc2[1]
             );
             const playerToScore = playersAndCards[playersAndCards.length - 1][0];
-            playerToScore.scores.push(SCORE_PER_TRICKPILE);
+            playerLookup[playerToScore.name][1] += SCORE_PER_TRICKPILE;
             console.log(`This suit is won by ${playerToScore.name} with value ${playersAndCards[playersAndCards.length - 1][1]}`);
         }
+        Object.values(playerLookup).forEach(
+            ([player, score]) => player.scores.push(score)
+        );
     }
 
     get gameIsFinished(): boolean {
