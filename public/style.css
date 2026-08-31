@@ -116,6 +116,63 @@ body {
     border-color: none;
 }
 
+
+.previous-trick {
+    position: absolute;
+    right: 20px;
+    top: 100px;
+    width: 200px;
+    text-align: center;
+}
+
+.prev-area {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    background-color: #fcf;
+    border-radius: 20px;
+}
+
+.prev-slot {
+    position: absolute;
+    transform: scale(0.75);
+    transform-origin: center center;
+}
+
+.prev-slot .card {
+    border-width: 5px;
+    border-style: solid;
+}
+
+/* 3-player */
+#prev-player-3 {
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.75);
+}
+
+#prev-player-3 .card {
+    border-color: #a00;
+}
+
+#prev-comp1-3 {
+    top: 0;
+    left: 0;
+}
+
+#prev-comp1-3 .card {
+    border-color: #0a0;
+}
+
+#prev-comp2-3 {
+    top: 0;
+    right: 0;
+}
+
+#prev-comp2-3 .card {
+    border-color: #00a;
+}
+
 .scores-panel {
     position: absolute;
     top: 50px;

@@ -48,6 +48,24 @@ export async function renderState(state: GameStateForUI) {
   // and current status
   document.getElementById('hand-number')!.innerText = `(hand #${state.handNumber}, trick #${state.trickNumber})`;
 
+  const numPlayers = state.playerNames.length;
+  const prevAreaEl = document.getElementById('prev-area')!;
+  prevAreaEl.innerHTML = '';
+  prevAreaEl.classList.add('prev-area');
+
+  state.playerNames.forEach(playerName => {
+
+    const prevEl = document.createElement('div');
+    prevEl.id = `prev-${playerName}-${numPlayers}`;
+    prevEl.classList.add('prev-slot');
+    prevAreaEl.appendChild(prevEl);
+    const prevCard = state.previous[playerName as PlayerName]!;
+    const prevCardEl = createCardElement(prevCard !== null ? prevCard.toStringShort(): "");
+    prevCardEl.classList.add('played-card');
+    prevEl.appendChild(prevCardEl);
+
+  });
+
   // document.getElementById('debug')!.innerText = `${state.gameState}`;
   const namesHolder = document.getElementById('scores-headers')!;
   const currentScoresHolder = document.getElementById('scores-current')!;

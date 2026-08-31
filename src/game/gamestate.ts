@@ -625,6 +625,10 @@ export class GameState {
             legalCardIndices: this.legalMoveIndices,
             grid: this.grid.clone(),
 
+            previous: Object.fromEntries(
+                this.names.map((name): [PlayerName, Card | null] => [name, this.getPlayedCard(name, this.previousTrick)])
+            ) as Partial<Record<PlayerName, Card | null>>,
+
             scores: Object.fromEntries(
                 this.teamNames.map(
                     (teamName): [TeamName, number] => {
@@ -664,6 +668,7 @@ export interface GameStateForUI {
     hands: Record<PlayerName, Card[]>;
     legalCardIndices: number[],
     grid: Grid,
+    previous: Partial<Record<PlayerName, Card | null>>;
 
     playerNames: PlayerName[];
     teamNames: TeamName[];
