@@ -165,6 +165,16 @@ export async function ismcts(
                 }
             }
         }
+
+        // update for additional scores from trickpiles and stops
+        const scoresBefores = state.scores;
+        if (state.currentState === "hand_complete") {
+            await state.increment();
+        }
+        for (let j = 0; j < scoresBefores.length; j++) {
+            rolloutRewards[j] += state.scores[j] - scoresBefores[j];
+        }
+
         const treeZeroSum = zeroSum(treeRewards);
         const rolloutZeroSum = zeroSum(rolloutRewards);
 
