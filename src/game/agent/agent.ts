@@ -7,14 +7,14 @@ export interface ComputerAgent {
 }
 
 export type Agent = ComputerAgent | 'human';
-export type AgentName = 'human' | 'random' | 'ismcts1000';
+export type AgentName = 'human' | 'random' | 'ismcts50';
 
 export function agentLookup(name: AgentName): Agent {
     if (name === 'human') {
         return name;
     } else if (name === 'random') {
         return randomAgent;
-    } else if (name === 'ismcts1000') {
+    } else if (name === 'ismcts50') {
         return ismctsAgent(50, randomAgent);
     }
     throw Error(`Unknown model ${name}`);

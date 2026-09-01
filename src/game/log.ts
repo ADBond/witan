@@ -3,11 +3,13 @@ import { Player } from "./player";
 import { GameConfig } from "./gamestate";
 import { AgentName } from "./agent/agent";
 import { getCommitHash } from "../utils/commit";
+import { Grid } from "./grid";
 
 declare const __COMMIT_HASH__: string;
 
 export class GameLog {
     private hands: Card[][] = [];
+    private grid: Card[] = [];
 
     private playerCount: number = 3;
 
@@ -54,6 +56,10 @@ export class GameLog {
         );
     }
 
+    captureGrid(grid: Grid) {
+        this.grid = grid.permanentGrid.map(gridEntry => gridEntry.card);
+    }
+
     get finalScores(): number[] {
         return Array.from(
             this.startingScores,
@@ -70,22 +76,21 @@ export class GameLog {
 export async function sendGameLog(log: GameLog) {
     console.log("Game Log:");
     console.log(log);
-    // TODO: restore once game is all put together
-    // try {
-    //     const res = await fetch("https://qaw-games.netlify.app/.netlify/functions/saveGameLog", {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json" },
-    //         body: JSON.stringify(log),
-    //     });
+    try {
+        const res = await fetch("https://qaw-games.netlify.app/.netlify/functions/saveGameLog", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(log),
+        });
 
-    //     if (!res.ok) {
-    //         console.warn("Game log upload failed:", res.status, await res.text());
-    //         return;
-    //     }
-    //     3.
-    //     const json = await res.json();
-    //     console.log("Log saved:", json);
-    // } catch (err) {
-    //     console.warn("Could not send game log (offline?):", err);
-    // }
+        if (!res.ok) {
+            console.warn("Game log upload failed:", res.status, await res.text());
+            return;
+        }
+        3.
+        const json = await res.json();
+        console.log("Log saved:", json);
+    } catch (err) {
+        console.warn("Could not send game log (offline?):", err);
+    }
 }

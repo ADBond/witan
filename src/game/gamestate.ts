@@ -468,6 +468,7 @@ export class GameState {
             log.handNumber = this.handNumber;
             log.captureHands(this.players.map((player) => [...this.getPlayerHand(player.positionIndex)]));
             log.startingScores = this.players.map((player) => player.score);
+            log.captureGrid(this.grid);
         }
     }
 
