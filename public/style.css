@@ -7,8 +7,10 @@ body {
 
 .game-board {
     position: relative;
+    min-width: 1200px;
     width: 1200px;
     height: 450px;
+    left: 5px;
     margin: 20px auto;
     border: 2px solid #fff;
     border-radius: 10px;
@@ -98,6 +100,7 @@ body {
 .hand {
     margin-top: 30px;
     height: 110px;
+    position: relative;
 }
 
 .card-legal {
@@ -116,6 +119,9 @@ body {
     border-color: none;
 }
 
+#trumps {
+    position: relative;
+}
 
 .previous-trick {
     position: absolute;
@@ -225,4 +231,19 @@ body {
     font-size: 0.9rem;
     color: #777;
     font-style: italic;
+}
+
+/* narrower screens push stuff down */
+@media (max-width: 1700px) {
+    .game-board {
+        top: 300px;
+    }
+
+    .hand {
+        top: 300px;
+    }
+
+    #trumps {
+        top: 300px;
+    }
 }
