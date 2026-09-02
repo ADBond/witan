@@ -5,14 +5,14 @@
 * ~~Stop penalties~~
 * ~~Down-card score~~
 * ~~Proper starting board~~
-* End the game
+* ~~End the game~~
 * 4p version
 * Play high-low on 12
 
 ## Features
 
 * Some score details
-* Previous trick (+ trump suit!)
+* ~~Previous trick (+ trump suit!)~~
 * ~~Colour score table to match player chips~~
 * Nicer display trickpile scores
 * Sort hand more sensibly
