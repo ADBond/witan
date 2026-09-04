@@ -118,11 +118,18 @@ export class GameState {
     }
 
     get cardsPerHand(): number {
-        return 13;
+        switch (this.numPlayers) {
+            case 3:
+                return 13;
+            case 4:
+                return 10;
+            default:
+                throw Error(`Unsupported player count: ${this.numPlayers}`);
+        } 
     }
 
     get numStartingCards(): number {
-        return 13;
+        return 52 - (this.cardsPerHand * this.numPlayers);
     }
 
     get trickNumber(): number {
@@ -219,7 +226,7 @@ export class GameState {
 
     getTeamPlayers(teamName: TeamName): Player[] {
         return this.players.filter(
-        player => this.getPlayerTeam(player.name) === teamName
+            player => this.getPlayerTeam(player.name) === teamName
         );
     }
 
@@ -283,10 +290,10 @@ export class GameState {
 
     get teamNames(): TeamName[] {
         switch (this.numPlayers) {
-        case 3:
-            return ['player', 'comp1', 'comp2'];
-        default:
-            throw Error(`Unsupported player count: ${this.numPlayers}`);
+            case 3:
+                return ['player', 'comp1', 'comp2'];
+            default:
+                throw Error(`Unsupported player count: ${this.numPlayers}`);
         } 
     }
 
