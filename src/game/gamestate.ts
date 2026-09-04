@@ -444,7 +444,7 @@ export class GameState {
         const toDeal = pack.filter(card => !tableCards.some(tableCard => Card.cardEquals(card, tableCard)));
         // for now just a fixed grid from a deal the other day
         shuffle(toDeal);
-        for (let i = 0; i < 13; i++) {
+        for (let i = 0; i < this.cardsPerHand; i++) {
             // for (const player of this.state.players) {
             // TODO: loop this properly!
             for (let playerIndex = 0; playerIndex < this.numPlayers; playerIndex++) {
