@@ -11,7 +11,7 @@ export class GameLog {
     private hands: Card[][] = [];
     private grid: Card[] = [];
 
-    private playerCount: number = 3;
+    private playerCount: number;
 
     public dealerIndex: number = -1;
     public handNumber: number = -1;
@@ -24,14 +24,16 @@ export class GameLog {
 
     public complete: boolean = false;
     private version: string = getCommitHash();
-    private logVersion: number = 1;
+    private logVersion: number = 2;
     private game: string = 'witan';
 
     constructor(
         private gameID: string,
         private config: GameConfig,
         private players: AgentName[],
-    ) { }
+    ) {
+        this.playerCount = players.length;
+    }
 
     captureTrick(score: number, trick: [Card, Player][], winnerIndex: number) {
         this.tricks.push(
@@ -76,6 +78,7 @@ export class GameLog {
 export async function sendGameLog(log: GameLog) {
     console.log("Game Log:");
     console.log(log);
+    return;
     try {
         const res = await fetch("https://qaw-games.netlify.app/.netlify/functions/saveGameLog", {
             method: "POST",
