@@ -199,7 +199,7 @@ body {
 /* 4-player */
 #prev-comp1-4 {
     top: 45px;
-    left: 0;
+    left: -10px;
 }
 
 #prev-comp2-4 {
@@ -210,7 +210,7 @@ body {
 
 #prev-comp3-4 {
     top: 45px;
-    right: 0;
+    right: -10px;
 }
 
 #prev-player-4 {
