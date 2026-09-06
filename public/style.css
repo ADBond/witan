@@ -64,7 +64,6 @@ body {
     border-style: dashed;
 }
 
-/* TODO player colours */
 .marker-player {
     background-color: #a00;
 }
@@ -75,6 +74,10 @@ body {
 
 .marker-comp2 {
     background-color: #00a;
+}
+
+.marker-comp3 {
+    background-color: #0aa;
 }
 
 .marker-owned {
@@ -150,6 +153,23 @@ body {
     border-style: solid;
 }
 
+
+.prev-player .card {
+    border-color: #a00;
+}
+
+.prev-comp1 .card {
+    border-color: #0a0;
+}
+
+.prev-comp2 .card {
+    border-color: #00a;
+}
+
+.prev-comp3 .card {
+    border-color: #0aa;
+}
+
 /* 3-player */
 #prev-player-3 {
     top: 90px;
@@ -157,17 +177,9 @@ body {
     transform: translateX(-50%) scale(0.75);
 }
 
-#prev-player-3 .card {
-    border-color: #a00;
-}
-
 #prev-comp1-3 {
     top: 0;
     left: 0;
-}
-
-#prev-comp1-3 .card {
-    border-color: #0a0;
 }
 
 #prev-comp2-3 {
@@ -175,8 +187,27 @@ body {
     right: 0;
 }
 
-#prev-comp2-3 .card {
-    border-color: #00a;
+/* 4-player */
+#prev-comp1-4 {
+    top: 45px;
+    left: 0;
+}
+
+#prev-comp2-4 {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) scale(0.75);
+}
+
+#prev-comp3-4 {
+    top: 45px;
+    right: 0;
+}
+
+#prev-player-4 {
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.75);
 }
 
 .scores-panel {

@@ -34,7 +34,7 @@ export class GameState {
 
     constructor(public playerNames: AgentName[], public config: GameConfig) {
         // TODO: more / flexi ??
-        const playerConfig: PlayerName[] = ['player', 'comp1', 'comp2'];
+        const playerConfig: PlayerName[] = ['player', 'comp1', 'comp2', 'comp3'];
         const agents: Agent[] = playerNames.map((name) => agentLookup(name));
         this.players = playerNames.map(
             (name, i) => new Player(
