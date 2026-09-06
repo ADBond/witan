@@ -7,10 +7,11 @@ import { SCORE_PER_STOP, SCORE_PER_TRICKPILE } from "./game";
 
 export type GameConfig = {
     targetScore: number,
+    numPlayers: number,
 }
 
 function copyConfig(config: GameConfig): GameConfig {
-    return {targetScore: config.targetScore};
+    return {targetScore: config.targetScore, numPlayers: config.numPlayers};
 }
 
 export type state = 'game_initialise' | 'play_card' | 'trick_complete' | 'hand_complete' | 'new_hand' | 'game_complete';
@@ -23,8 +24,7 @@ export class GameState {
 
     public players: Player[] = [];
     public trickIndex: number;
-    // public trickInProgress: [Card, Player][] = [];
-    // public playedCards: Card[] = [];
+
     public grid: Grid = new Grid();
 
     public handNumber: number = 0;
@@ -33,8 +33,7 @@ export class GameState {
     public previousTrick: [Card, Player][] = [];
 
     constructor(public playerNames: AgentName[], public config: GameConfig) {
-        // TODO: more / flexi ??
-        const playerConfig: PlayerName[] = ['player', 'comp1', 'comp2'];
+        const playerConfig: PlayerName[] = ['player', 'comp1', 'comp2', 'comp3'];
         const agents: Agent[] = playerNames.map((name) => agentLookup(name));
         this.players = playerNames.map(
             (name, i) => new Player(
@@ -66,11 +65,7 @@ export class GameState {
 
         newState.players = this.players.map(player => player.clone());
         newState.trickIndex = this.trickIndex;
-        // TODO: does it matter that these players are different to the ones in player array?
-        // newState.trickInProgress = this.trickInProgress.map(
-        //     ([card, player]) => [card, player.clone()]
-        // );
-        // newState.playedCards = [...this.playedCards];
+
         newState.grid = this.grid.clone();
     
         newState.handNumber = this.handNumber;
@@ -118,11 +113,18 @@ export class GameState {
     }
 
     get cardsPerHand(): number {
-        return 13;
+        switch (this.numPlayers) {
+            case 3:
+                return 13;
+            case 4:
+                return 10;
+            default:
+                throw Error(`Unsupported player count: ${this.numPlayers}`);
+        } 
     }
 
     get numStartingCards(): number {
-        return 13;
+        return 52 - (this.cardsPerHand * this.numPlayers);
     }
 
     get trickNumber(): number {
@@ -194,6 +196,8 @@ export class GameState {
                 switch (this.numPlayers) {
                     case 3:
                         return 'player';
+                    case 4:
+                        return 'team02';
                     default:
                         throw Error(`Unsupported player count: ${this.numPlayers}`);
                 }
@@ -202,6 +206,8 @@ export class GameState {
                 switch (this.numPlayers) {
                     case 3:
                         return 'comp1';
+                    case 4:
+                        return 'team13';
                     default:
                         throw Error(`Unsupported player count: ${this.numPlayers}`);
                 }
@@ -210,16 +216,21 @@ export class GameState {
                 switch (this.numPlayers) {
                     case 3:
                         return 'comp2';
+                    case 4:
+                        return 'team02';
                     default:
                         throw Error(`Unsupported player count: ${this.numPlayers}`);
                 }
+                break;
+            case 'comp3':
+                return 'team13';
                 break;
         }
     }
 
     getTeamPlayers(teamName: TeamName): Player[] {
         return this.players.filter(
-        player => this.getPlayerTeam(player.name) === teamName
+            player => this.getPlayerTeam(player.name) === teamName
         );
     }
 
@@ -228,11 +239,24 @@ export class GameState {
     }
 
     get prevTrickScores(): number[] {
-        return this.players.map(player => player.previousScore);
+        // purely for ismcts - get it at the team level
+        return this.players.map(
+            player => {
+                const team = this.getPlayerTeam(player.name);
+                return this.getTeamPlayers(team).map(
+                    p => p.previousScore
+                ).reduce((total, value) => total + value, 0);
+            }
+        );
     }
 
     get scores(): number[] {
-        return this.players.map(player => player.score);
+        return this.players.map(
+        player => {
+            const team = this.getPlayerTeam(player.name);
+            return this.getTeamScore(team);
+        }
+        );
     }
 
     private getPlayedCard(name: PlayerName, trick: [Card | null, Player][]): Card | null {
@@ -283,10 +307,12 @@ export class GameState {
 
     get teamNames(): TeamName[] {
         switch (this.numPlayers) {
-        case 3:
-            return ['player', 'comp1', 'comp2'];
-        default:
-            throw Error(`Unsupported player count: ${this.numPlayers}`);
+            case 3:
+                return ['player', 'comp1', 'comp2'];
+            case 4:
+                return ['team02', 'team13'];
+            default:
+                throw Error(`Unsupported player count: ${this.numPlayers}`);
         } 
     }
 
@@ -444,7 +470,7 @@ export class GameState {
         const toDeal = pack.filter(card => !tableCards.some(tableCard => Card.cardEquals(card, tableCard)));
         // for now just a fixed grid from a deal the other day
         shuffle(toDeal);
-        for (let i = 0; i < 13; i++) {
+        for (let i = 0; i < this.cardsPerHand; i++) {
             // for (const player of this.state.players) {
             // TODO: loop this properly!
             for (let playerIndex = 0; playerIndex < this.numPlayers; playerIndex++) {
@@ -517,8 +543,9 @@ export class GameState {
         // update the scores
         this.players[winnerPlayerIndex].scores.push(trickValue);
         // other players explicitly score 0 !
-        this.players[(winnerPlayerIndex + 1) % this.numPlayers].scores.push(0);
-        this.players[(winnerPlayerIndex + 2) % this.numPlayers].scores.push(0);
+        for (let i = 1; i < this.numPlayers; i++) {
+            this.players[(winnerPlayerIndex + i) % this.numPlayers].scores.push(0);
+        }
 
         return trickValue;
     }
@@ -618,7 +645,12 @@ export class GameState {
 
     getStateForUI(): GameStateForUI {
         return ({
-            hands: { comp1: [], player: this.currentState === "hand_complete" ? [] : this.humanHand.slice(), comp2: [] },
+            hands: {
+                comp1: [],
+                player: this.currentState === "hand_complete" ? [] : this.humanHand.slice(),
+                comp2: [],
+                comp3: [],
+            },
 
             playerNames: this.names,
             teamNames: this.teamNames,

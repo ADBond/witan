@@ -10,9 +10,13 @@ function displayNameTeam(team: TeamName, numPlayers: number): string {
     case 'player':
       return 'Player';
     case 'comp1':
-      return numPlayers === 3 ? 'West' : 'W';
+      return 'West';
     case 'comp2':
-      return numPlayers === 3 ? 'East' : 'NW';
+      return 'East';
+    case 'team02':
+      return 'Player & N';
+    case 'team13':
+      return 'E & W';
   }
 }
 
@@ -58,6 +62,7 @@ export async function renderState(state: GameStateForUI) {
     const prevEl = document.createElement('div');
     prevEl.id = `prev-${playerName}-${numPlayers}`;
     prevEl.classList.add('prev-slot');
+    prevEl.classList.add(`prev-${playerName}`);
     prevAreaEl.appendChild(prevEl);
     const prevCard = state.previous[playerName as PlayerName]!;
     const prevCardEl = createCardElement(prevCard !== null ? prevCard.toStringShort(): "");
