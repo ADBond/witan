@@ -7,10 +7,11 @@ import { SCORE_PER_STOP, SCORE_PER_TRICKPILE } from "./game";
 
 export type GameConfig = {
     targetScore: number,
+    numPlayers: number,
 }
 
 function copyConfig(config: GameConfig): GameConfig {
-    return {targetScore: config.targetScore};
+    return {targetScore: config.targetScore, numPlayers: config.numPlayers};
 }
 
 export type state = 'game_initialise' | 'play_card' | 'trick_complete' | 'hand_complete' | 'new_hand' | 'game_complete';

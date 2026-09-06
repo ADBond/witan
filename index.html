@@ -12,6 +12,21 @@
 </head>
 
 <body>
+    <div id="new-game-button">New game</div>
+    <div id="new-game-menu" hidden>
+        <form id="new-game-form">
+            <fieldset>
+                <legend>Num. players</legend>
+                <input type="radio" name="numplayers" value="3" id="numplayers-3">
+                <label for="numplayers-3">3</label>
+
+                <input type="radio" name="numplayers" value="4" id="numplayers-4">
+                <label for="numplayers-4">4</label>
+            </fieldset>
+
+            <button type="submit" id="play-now">Play Now</button>
+        </form>
+    </div>
 
     <div class="config" id="config"></div>
     <div class="hand-number" id="hand-number"></div>
