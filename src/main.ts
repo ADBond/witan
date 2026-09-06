@@ -9,7 +9,6 @@ async function loadGame(config: GameConfig) {
   await renderWithDelays(futureStates);
 }
 
-
 const DEFAULTS: GameConfig = {
   targetScore: 601,
   numPlayers: 3,
@@ -23,6 +22,10 @@ const form = document.getElementById("new-game-form") as HTMLFormElement;
 function resetValues() {
   (form.querySelector(
     `input[name="numplayers"][value="${DEFAULTS.numPlayers}"]`
+  ) as HTMLInputElement).checked = true;
+
+  (form.querySelector(
+    `input[name="targetscore"][value="${DEFAULTS.targetScore}"]`
   ) as HTMLInputElement).checked = true;
 
 }
@@ -41,8 +44,9 @@ form.addEventListener("submit", async (e) => {
 
   const formData = new FormData(form);
   const numPlayers = formData.get("numplayers") as string;
+  const targetScore = formData.get("targetscore") as string;
   const config: GameConfig = {
-    targetScore: DEFAULTS.targetScore,
+    targetScore: parseInt(targetScore),
     numPlayers: parseInt(numPlayers),
   }
 

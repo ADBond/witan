@@ -2,9 +2,6 @@ import { GameConfig, GameState, GameStateForUI } from "./gamestate";
 import { GameLog, sendGameLog } from "./log";
 import { AgentName } from "./agent/agent";
 
-export const defaultConfig: GameConfig = {
-  targetScore: 601,
-}
 
 export const SCORE_PER_TRICKPILE = 15;
 export const SCORE_PER_STOP = -10;
@@ -30,7 +27,7 @@ export class Game {
 
   constructor(
       playerNames: AgentName[],
-      config: GameConfig = defaultConfig,
+      config: GameConfig,
     ) {
     this.gameID = randomID();
     this.state = new GameState(playerNames, config);
