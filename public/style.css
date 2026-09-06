@@ -56,24 +56,33 @@ body {
     width: 40px;
     left: 12px;
     border-radius: 50%;
-    border: 4px solid black;
+    border: 4px solid #444;
 }
 
 .marker-lead {
-    border-color: yellow;
+    border-color: #000;
     border-style: dashed;
+    border-width: 6px;
+    height: 38px;
+    width: 38px;
 }
 
 .marker-player {
     background-color: #a00;
 }
+.marker-lead.marker-player {
+    border-color: #aaa;
+}
 
 .marker-comp1 {
-    background-color: #0a0;
+    background-color: #00a;
+}
+.marker-lead.marker-comp1 {
+    border-color: #aaa;
 }
 
 .marker-comp2 {
-    background-color: #00a;
+    background-color: #aa0;
 }
 
 .marker-comp3 {
@@ -159,11 +168,11 @@ body {
 }
 
 .prev-comp1 .card {
-    border-color: #0a0;
+    border-color: #00a;
 }
 
 .prev-comp2 .card {
-    border-color: #00a;
+    border-color: #aa0;
 }
 
 .prev-comp3 .card {
@@ -238,6 +247,9 @@ body {
     border-radius: 5px;
     width: 33%;
     /* background: #727; */
+
+    text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000, 1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000;
+
 }
 
 /* 3-player */
@@ -246,25 +258,25 @@ body {
 }
 
 #scores-table-header-comp1 {
-    background: #0a0;
+    background: #00a;
 }
 
 #scores-table-header-comp2 {
-    background: #00a;
+    background: #aa0;
 }
 /* 4-player */
 #scores-table-header-team02 {
     background: repeating-linear-gradient(
         45deg,
         #a00 0 10px,
-        #00a 10px 20px
+        #aa0 10px 20px
     )
 }
 
 #scores-table-header-team13 {
     background: repeating-linear-gradient(
         45deg,
-        #0a0 0 10px,
+        #00a 0 10px,
         #0aa 10px 20px
     )
 }
