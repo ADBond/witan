@@ -238,11 +238,24 @@ export class GameState {
     }
 
     get prevTrickScores(): number[] {
-        return this.players.map(player => player.previousScore);
+        // purely for ismcts - get it at the team level
+        return this.players.map(
+            player => {
+                const team = this.getPlayerTeam(player.name);
+                return this.getTeamPlayers(team).map(
+                    p => p.previousScore
+                ).reduce((total, value) => total + value, 0);
+            }
+        );
     }
 
     get scores(): number[] {
-        return this.players.map(player => player.score);
+        return this.players.map(
+        player => {
+            const team = this.getPlayerTeam(player.name);
+            return this.getTeamScore(team);
+        }
+        );
     }
 
     private getPlayedCard(name: PlayerName, trick: [Card | null, Player][]): Card | null {
@@ -529,8 +542,9 @@ export class GameState {
         // update the scores
         this.players[winnerPlayerIndex].scores.push(trickValue);
         // other players explicitly score 0 !
-        this.players[(winnerPlayerIndex + 1) % this.numPlayers].scores.push(0);
-        this.players[(winnerPlayerIndex + 2) % this.numPlayers].scores.push(0);
+        for (let i = 1; i < this.numPlayers; i++) {
+            this.players[(winnerPlayerIndex + i) % this.numPlayers].scores.push(0);
+        }
 
         return trickValue;
     }
