@@ -7,7 +7,7 @@ const opp = 'ismcts50'
 
 export function newGame(): void {
     game = new Game(
-        ['human', opp, opp],
+        ['human', opp, opp, opp],
         defaultConfig,
     );
 }

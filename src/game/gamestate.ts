@@ -301,6 +301,8 @@ export class GameState {
         switch (this.numPlayers) {
             case 3:
                 return ['player', 'comp1', 'comp2'];
+            case 4:
+                return ['team02', 'team13', 'team02', 'team13'];
             default:
                 throw Error(`Unsupported player count: ${this.numPlayers}`);
         } 
