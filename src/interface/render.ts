@@ -10,9 +10,13 @@ function displayNameTeam(team: TeamName, numPlayers: number): string {
     case 'player':
       return 'Player';
     case 'comp1':
-      return numPlayers === 3 ? 'West' : 'W';
+      return 'West';
     case 'comp2':
-      return numPlayers === 3 ? 'East' : 'NW';
+      return 'East';
+    case 'team02':
+      return 'Player & N';
+    case 'team13':
+      return 'E & W';
   }
 }
 

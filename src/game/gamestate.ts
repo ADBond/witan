@@ -201,6 +201,8 @@ export class GameState {
                 switch (this.numPlayers) {
                     case 3:
                         return 'player';
+                    case 4:
+                        return 'team02';
                     default:
                         throw Error(`Unsupported player count: ${this.numPlayers}`);
                 }
@@ -209,6 +211,8 @@ export class GameState {
                 switch (this.numPlayers) {
                     case 3:
                         return 'comp1';
+                    case 4:
+                        return 'team13';
                     default:
                         throw Error(`Unsupported player count: ${this.numPlayers}`);
                 }
@@ -217,9 +221,14 @@ export class GameState {
                 switch (this.numPlayers) {
                     case 3:
                         return 'comp2';
+                    case 4:
+                        return 'team02';
                     default:
                         throw Error(`Unsupported player count: ${this.numPlayers}`);
                 }
+                break;
+            case 'comp3':
+                return 'team13';
                 break;
         }
     }
@@ -625,7 +634,12 @@ export class GameState {
 
     getStateForUI(): GameStateForUI {
         return ({
-            hands: { comp1: [], player: this.currentState === "hand_complete" ? [] : this.humanHand.slice(), comp2: [] },
+            hands: {
+                comp1: [],
+                player: this.currentState === "hand_complete" ? [] : this.humanHand.slice(),
+                comp2: [],
+                comp3: [],
+            },
 
             playerNames: this.names,
             teamNames: this.teamNames,
