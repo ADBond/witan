@@ -23,8 +23,7 @@ export class GameState {
 
     public players: Player[] = [];
     public trickIndex: number;
-    // public trickInProgress: [Card, Player][] = [];
-    // public playedCards: Card[] = [];
+
     public grid: Grid = new Grid();
 
     public handNumber: number = 0;
@@ -33,7 +32,6 @@ export class GameState {
     public previousTrick: [Card, Player][] = [];
 
     constructor(public playerNames: AgentName[], public config: GameConfig) {
-        // TODO: more / flexi ??
         const playerConfig: PlayerName[] = ['player', 'comp1', 'comp2', 'comp3'];
         const agents: Agent[] = playerNames.map((name) => agentLookup(name));
         this.players = playerNames.map(
@@ -66,11 +64,7 @@ export class GameState {
 
         newState.players = this.players.map(player => player.clone());
         newState.trickIndex = this.trickIndex;
-        // TODO: does it matter that these players are different to the ones in player array?
-        // newState.trickInProgress = this.trickInProgress.map(
-        //     ([card, player]) => [card, player.clone()]
-        // );
-        // newState.playedCards = [...this.playedCards];
+
         newState.grid = this.grid.clone();
     
         newState.handNumber = this.handNumber;
@@ -302,7 +296,7 @@ export class GameState {
             case 3:
                 return ['player', 'comp1', 'comp2'];
             case 4:
-                return ['team02', 'team13', 'team02', 'team13'];
+                return ['team02', 'team13'];
             default:
                 throw Error(`Unsupported player count: ${this.numPlayers}`);
         } 
