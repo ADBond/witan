@@ -3,7 +3,7 @@ import { defaultConfig } from "../game/game";
 
 let game: Game;
 // const opp = 'random';
-const opp = 'ismcts50'
+const opp = 'ismcts100'
 
 export function newGame(): void {
     game = new Game(
